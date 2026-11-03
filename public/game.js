@@ -503,26 +503,35 @@
     if (mine) { A.me.pose('windup', 170, easeOut, { h1: HAND[mine] }); A.me.move(0.27, 170); } else A.me.pose('hesitate', 300);
     if (theirs) { A.opp.pose('windup', 170, easeOut, { h1: HAND[theirs] }); A.opp.move(0.73, 170); } else A.opp.pose('hesitate', 300);
     await sleep(190); if (tok.dead) return;
-    // release
+    // spacing from real body sizes so strikes land on the body instead of passing through it
+    const cv = $('#stage'), W = cv.width, s = cv.height * 0.0031;
+    const sc = (a) => JK.FIGHTER[a.fid].b.scale || 1;
+    const REACH = { rock: 84, paper: 80, scissors: 90 };
+    const reach = (a, ch) => (REACH[ch] * s * sc(a)) / W, body = (a) => ((JK.FIGHTER[a.fid].B.ch * 0.55 + 6) * s * sc(a)) / W;
     SFX.whoosh();
-    if (mine) { A.me.pose(mine, 120, easeBack); A.me.move(0.43, 130); A.me.trailOn = true; }
-    if (theirs) { A.opp.pose(theirs, 120, easeBack); A.opp.move(0.57, 130); A.opp.trailOn = true; }
-    await sleep(130); if (tok.dead) return;
-    const ys = (a) => (a.out ? a.out.hand[1] / $('#stage').height : 0.5);
-    const hitX = res === 'me' ? 0.56 : res === 'opp' ? 0.44 : 0.5;
     if (res === 'draw') {
-      SFX.clash(); impact(0.5, (ys(A.me) + ys(A.opp)) / 2, 'clash', 1.06);
+      if (mine) { A.me.pose(mine, 130, easeBack); A.me.move(0.5 - reach(A.me, mine) + 0.004, 140); A.me.trailOn = true; }
+      if (theirs) { A.opp.pose(theirs, 130, easeBack); A.opp.move(0.5 + reach(A.opp, theirs) - 0.004, 140); A.opp.trailOn = true; }
+      await sleep(140); if (tok.dead) return;
+      SFX.clash(); impact(0.5, A.me.out ? A.me.out.hand[1] / cv.height : 0.5, 'clash', 1.06);
       await sleep(140); if (tok.dead) return;
       A.me.trailOn = A.opp.trailOn = false;
-      A.me.move(0.35, 380); A.opp.move(0.65, 380);
+      A.me.move(0.33, 380); A.opp.move(0.67, 380);
+      if (mine) A.me.idle(380); if (theirs) A.opp.idle(380);
       banner('DRAW', 'draw');
     } else {
-      const loser = res === 'me' ? 'opp' : 'me', winChoice = res === 'me' ? mine : theirs;
-      SFX.hit(); impact(hitX, ys(A[res]), 'hit', 1.1);
+      // only the faster fighter releases; the loser is caught mid-windup
+      const win = A[res], loser = res === 'me' ? 'opp' : 'me', L = A[loser], winChoice = res === 'me' ? mine : theirs;
+      const dirn = res === 'me' ? 1 : -1;
+      const target = L.xt - dirn * (reach(win, winChoice) + body(L) + 0.02);
+      win.pose(winChoice, 140, easeBack); win.move(target, 150); win.trailOn = true;
+      await sleep(150); if (tok.dead) return;
+      const ch = L.out ? L.out.chest : null;
+      SFX.hit(); impact(ch ? ch[0] / W : 0.5, ch ? ch[1] / cv.height : 0.5, 'hit', 1.1);
       await sleep(140); if (tok.dead) return;
-      A.me.trailOn = A.opp.trailOn = false;
-      A[loser].pose(JK.REACT[winChoice], 170, easeBack);
-      A[loser].move(loser === 'me' ? 0.19 : 0.81, 480);
+      win.trailOn = false;
+      L.pose(JK.REACT[winChoice], 170, easeBack);
+      L.move(loser === 'me' ? 0.16 : 0.84, 480);
       const cw = sideObj(d.clashWins);
       setHP(loser, 100 - (loser === 'me' ? cw.opp : cw.me) * 50);
       setDots(d.clashWins);

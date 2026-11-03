@@ -99,41 +99,43 @@
   const BODY = {
     male: { sh: 40, ch: 34, wa: 27, hip: 30, ua: [6.6, 7.4, 5.4], fa: [5.6, 6, 3.9], th: [9.6, 9.8, 6.4], shn: [6.6, 7, 4.1], hand: 1, foot: 1, leg: 1, tl: 1, neck: 1, face: 'male' },
     fem: { sh: 32, ch: 29, wa: 21.5, hip: 30, ua: [5, 5.4, 4.1], fa: [4.2, 4.4, 3.1], th: [8.6, 8.4, 5.4], shn: [5.6, 5.8, 3.4], hand: 0.88, foot: 0.9, leg: 1.03, tl: 0.96, neck: 0.85, face: 'fem' },
+    muscle: { sh: 46, ch: 40, wa: 29, hip: 32, ua: [7.8, 9, 6.4], fa: [6.6, 7.2, 4.6], th: [10.4, 10.8, 7], shn: [7.2, 7.8, 4.6], hand: 1.08, foot: 1.05, leg: 0.98, tl: 1, neck: 1.2, face: 'square' },
+    lean: { sh: 37, ch: 31, wa: 24.5, hip: 28, ua: [5.8, 6.4, 4.8], fa: [5, 5.3, 3.6], th: [8.8, 9, 5.9], shn: [6, 6.4, 3.8], hand: 0.96, foot: 0.98, leg: 1.08, tl: 1.04, neck: 0.95, face: 'angular' },
     heavy: { sh: 52, ch: 48, wa: 48, hip: 46, ua: [9.5, 10.5, 8], fa: [7.6, 8.2, 5.6], th: [14, 14.5, 10], shn: [9.4, 9.8, 6.6], hand: 1.2, foot: 1.2, leg: 0.9, tl: 1.02, neck: 1.5, face: 'heavy' },
   };
   JK.FIGHTERS = [
     { id: 'hikari', name: 'HIKARI', style: 'Shrine Ceremonial Arts', stance: 'Upright crane stance', idle: 'crane', stats: { speed: 3, poise: 5, weight: 2 },
       desc: 'Ceremonial white robes over vermilion hakama, a broad gold obi and braided cords. Patient, precise, untouchable.',
       c: { skin: '#f7dccb', hair: '#1c1519', eye: '#8a2b2b', top: '#f8f5ef', top2: '#c8341f', pants: '#c8341f', belt: '#dca935', cord: '#c8341f', accent: '#c8341f', trim: '#dca935', feet: '#f8f5ef', ink: '#2a1418' },
-      b: { body: 'fem', top: 'miko', sleeve: 'wide', legs: 'hakama', feet: 'zori', hair: 'miko', belt: 'obi', fem: true } },
+      b: { body: 'fem', top: 'miko', sleeve: 'wide', legs: 'hakama', feet: 'zori', hair: 'miko', belt: 'obi', fem: true, scale: 0.95, eye: 'round', eyeK: 1.12 } },
     { id: 'kagero', name: 'KAGERO', style: 'Shadow Kunoichi', stance: 'Low-centered combat crouch', idle: 'crouch', stats: { speed: 5, poise: 3, weight: 2 },
       desc: 'Lacquered plum-and-black armor plates, a crescent-moon crest, forearm guards and a trailing ochre scarf.',
       c: { skin: '#eccdb8', hair: '#d2cde0', eye: '#8f45b0', top: '#1e1824', pants: '#1e1824', accent: '#6b2f86', trim: '#d4a54e', feet: '#17131b', hands: '#17131b', ink: '#0c0910' },
-      b: { body: 'fem', top: 'armor', sleeve: 'tight', legs: 'tight', feet: 'tabi', hair: 'kagero', mask: true, scarf: true, fem: true } },
+      b: { body: 'fem', top: 'armor', sleeve: 'tight', legs: 'tight', feet: 'tabi', hair: 'kagero', mask: true, scarf: true, fem: true, scale: 0.9, eye: 'sharp', eyeK: 1.05 } },
     { id: 'tetsuo', name: 'TETSUO', style: 'Brushstroke Karate', stance: 'Grounded orthodox guard', idle: 'guard', stats: { speed: 3, poise: 4, weight: 4 },
-      desc: 'A crisp white gi swept with crimson brushstrokes, black belt and protective hand guards. Rooted like an anchor.',
-      c: { skin: '#e0b08c', hair: '#21160f', eye: '#3a2416', top: '#f5f3ef', pants: '#f5f3ef', belt: '#141414', accent: '#a8161f', hands: '#a8161f', ink: '#24170f' },
-      b: { body: 'male', top: 'gi', sleeve: 'gi', legs: 'gi', feet: 'bare', hair: 'tetsuo', belt: 'belt', pattern: 'brush' } },
+      desc: 'A sleeveless white gi swept with crimson brushstrokes, bandaged forearms and red hand guards. Built like a stone wall.',
+      c: { skin: '#c98f68', hair: '#21160f', eye: '#3a2416', top: '#f5f3ef', pants: '#f5f3ef', belt: '#141414', accent: '#a8161f', hands: '#a8161f', ink: '#24170f' },
+      b: { body: 'muscle', top: 'gi', sleeve: 'none', legs: 'gi', feet: 'bare', hair: 'tetsuo', belt: 'belt', pattern: 'brush', wraps: true, scale: 1.02, eye: 'sharp', eyeK: 0.9, brow: 2.6, mark: 'scar' } },
     { id: 'hayato', name: 'HAYATO', style: 'Jujutsu Arts', stance: 'Upright ready stance', idle: 'ready', stats: { speed: 4, poise: 4, weight: 3 },
-      desc: 'A traditional white uniform with sharp black lapels, a tied black belt and bare feet. Every motion measured and clean.',
-      c: { skin: '#e6bb9a', hair: '#241a15', eye: '#3b2a20', top: '#f7f6f2', lapel: '#161616', pants: '#f7f6f2', belt: '#141414', ink: '#211712' },
-      b: { body: 'male', top: 'gi', sleeve: 'gi', legs: 'gi', feet: 'bare', hair: 'hayato', belt: 'belt' } },
+      desc: 'Tall and lean in a deep navy uniform with crisp white lapels, a long fringe falling over one eye. Every motion measured and clean.',
+      c: { skin: '#f0cdb2', hair: '#14161f', eye: '#2c3550', top: '#22304f', lapel: '#e9e6df', pants: '#22304f', belt: '#0d0d0d', ink: '#0d1220' },
+      b: { body: 'lean', top: 'gi', sleeve: 'gi', legs: 'gi', feet: 'bare', hair: 'hayato', belt: 'belt', scale: 1.07, eye: 'narrow', eyeK: 0.95 } },
     { id: 'shin', name: 'SHIN', style: 'Wandering Ronin', stance: 'Relaxed drifter guard', idle: 'drifter', unlock: 1, stats: { speed: 4, poise: 5, weight: 3 },
-      desc: 'An indigo kimono worn loose over striped hakama, a straw hat slung across the back. Calm until the very last instant.',
-      c: { skin: '#d9a885', hair: '#1a1414', eye: '#4a3328', top: '#2c3d6b', top2: '#d9d2c2', pants: '#7d7f86', belt: '#3a3030', accent: '#2c3d6b', feet: '#e8e2d4', ink: '#141018' },
-      b: { body: 'male', top: 'kimono', sleeve: 'kimono', legs: 'hakama', feet: 'zori', hair: 'shin', belt: 'belt', hat: true, stubble: true, pattern: 'stripes' } },
+      desc: 'A weathered brown kimono worn loose over striped hakama, a straw hat slung across the back. Calm until the very last instant.',
+      c: { skin: '#c99572', hair: '#1a1414', eye: '#4a3328', top: '#6b4a2e', top2: '#d9d2c2', pants: '#7d7f86', belt: '#2a2020', accent: '#6b4a2e', feet: '#e8e2d4', ink: '#141018' },
+      b: { body: 'male', top: 'kimono', sleeve: 'kimono', legs: 'hakama', feet: 'zori', hair: 'shin', belt: 'belt', hat: true, stubble: true, pattern: 'stripes', scale: 1.03, eye: 'narrow', eyeK: 0.92, mark: 'scarEye' } },
     { id: 'gonta', name: 'GONTA', style: 'Mountain Wrestler', stance: 'Wide planted squat', idle: 'shiko', unlock: 2, stats: { speed: 2, poise: 4, weight: 5 },
       desc: 'Topknot, braided ceremonial rope and a deep-blue belt wrap. When he plants his feet, the mountain moves first.',
       c: { skin: '#e2b48e', hair: '#16110e', eye: '#3a2416', top: '#e2b48e', pants: '#e2b48e', ink: '#26170f' },
-      b: { body: 'heavy', top: 'bare', sleeve: 'none', legs: 'bare', feet: 'bare', hair: 'gonta' } },
+      b: { body: 'heavy', top: 'bare', sleeve: 'none', legs: 'bare', feet: 'bare', hair: 'gonta', scale: 1.08, eye: 'kind', eyeK: 0.82, brow: 2.4 } },
     { id: 'daigo', name: 'DAIGO', style: 'Mountain Ascetic', stance: 'Single-hand prayer stance', idle: 'prayer', unlock: 3, stats: { speed: 3, poise: 5, weight: 3 },
       desc: 'Checkered pilgrim robes, a tiny black cap and a sash of bright orange pom-poms. Fights with the stillness of the peaks.',
       c: { skin: '#d8ab88', hair: '#b9b4ab', eye: '#3a3026', top: '#f1ece0', pants: '#e4ddcc', belt: '#ece6d6', feet: '#f1ece0', ink: '#231a12' },
-      b: { body: 'male', top: 'yamabushi', sleeve: 'gi', legs: 'gi', feet: 'tabi', hair: 'daigo', belt: 'belt', beard: true, pattern: 'checker' } },
+      b: { body: 'male', top: 'yamabushi', sleeve: 'gi', legs: 'gi', feet: 'tabi', hair: 'daigo', belt: 'belt', beard: true, pattern: 'checker', scale: 0.97, eye: 'kind', eyeK: 0.85, brow: 2.8, mark: 'wrinkles' } },
     { id: 'yuki', name: 'YUKI', style: 'Snowfall Spirit', stance: 'Floating drift stance', idle: 'drift', unlock: 4, stats: { speed: 5, poise: 4, weight: 1 },
       desc: 'A pale kimono patterned with ice crystals, an ice-blue obi and a river of white hair. The air turns cold before she moves.',
       c: { skin: '#fbeef0', hair: '#eef3fb', eye: '#3f9fd6', top: '#f2f7fb', top2: '#9fd3f0', lapel: '#cfe8f6', pants: '#f2f7fb', belt: '#7cc3e8', cord: '#ffffff', accent: '#9fd3f0', feet: '#ffffff', ink: '#2a3a52' },
-      b: { body: 'fem', top: 'kimono', sleeve: 'wide', legs: 'robe', feet: 'tabi', hair: 'yuki', belt: 'obi', fem: true, pattern: 'snow', aura: true } },
+      b: { body: 'fem', top: 'kimono', sleeve: 'wide', legs: 'robe', feet: 'tabi', hair: 'yuki', belt: 'obi', fem: true, pattern: 'snow', aura: true, scale: 0.96, eye: 'round', eyeK: 1.22 } },
   ];
   JK.FIGHTERS.forEach((f) => (f.B = Object.assign({}, BODY[f.b.body])));
   JK.FIGHTER = Object.fromEntries(JK.FIGHTERS.map((f) => [f.id, f]));
@@ -263,6 +265,10 @@
       hand(L, arm, handType, f, dk);
       L.push(P(limbPath(arm.a, arm.b, ua[0], ua[1], ua[2], 0.45, 0.15), skin));
       L.push(P(circle(arm.a, ua[0] * 1.15), skin, { k: 2, hi: false }));
+      if (f.b.wraps) {
+        L.push(P(limbPath(lerp(arm.b, arm.c, 0.45), lerp(arm.b, arm.c, 0.95), fa[1] * 1.1, fa[1] * 1.08, fa[2] * 1.2), dk('#efe9dc'), { k: 1.5, line: 0.8 }));
+        L.push({ fn: (ctx) => { ctx.strokeStyle = c.ink; ctx.globalAlpha = 0.4; ctx.lineWidth = 0.7; for (let i = 0; i < 4; i++) { const m = lerp(arm.b, arm.c, 0.5 + i * 0.11), d = [arm.c[0] - arm.b[0], arm.c[1] - arm.b[1]], l = Math.hypot(d[0], d[1]), n = [-d[1] / l, d[0] / l]; ctx.beginPath(); ctx.moveTo(m[0] + n[0] * 6, m[1] + n[1] * 6); ctx.lineTo(m[0] - n[0] * 6 + d[0] * 0.05, m[1] - n[1] * 6 + d[1] * 0.05); ctx.stroke(); } } });
+      }
       return;
     }
     if (kind === 'tight') {
@@ -437,7 +443,7 @@
       },
     },
     hayato: {
-      front: () => [[sharp([-9, 3]), [-11.2, -5.5], [-7.6, -13], [-0.5, -15.8], [7, -14], [11.6, -9], sharp([11.6, -4.6]), [8.6, -8], [4.6, -9.6], [1, -8.4], [-2.6, -6.4], sharp([-5.4, 1.6])]],
+      front: (s) => [[sharp([-9, 2]), [-11, -6], [-7, -13.5], [0, -16.4], [8, -15.4], [13.6, -10.4], sharp([15 + s[0] * 0.2, -1 + s[1] * 0.2]), [11, -5.6], sharp([10.2 + s[0] * 0.2, 1.8 + s[1] * 0.2]), [7.4, -6.4], [2, -8.8], [-3, -7.2], sharp([-5, 1])]],
     },
     shin: {
       back: (s) => [[-6, -14], [-13 + s[0] * 0.4, -14 + s[1] * 0.3], [-23 + s[0] * 1.5, -9 + s[1] * 1.3], sharp([-31 + s[0] * 2, 0 + s[1] * 2]), [-24 + s[0] * 1.4, -3 + s[1] * 1.2], sharp([-26 + s[0] * 1.6, 6 + s[1] * 1.8]), [-17 + s[0], -3 + s[1] * 0.8], [-9, -7]],
@@ -471,6 +477,8 @@
   const FACES = {
     male: [[-10.5, -3], [-8, -11.2], [-1, -14.6], [6.6, -12.6], [10.6, -6], [11.2, -1.4], sharp([12.8, 2.4]), [11, 3.8], [11.2, 6], [10.2, 7.8], [9.6, 10.4], [6, 12.8], [0.6, 11.4], [-4, 7.6], [-8, 4]],
     fem: [[-10.4, -3], [-8, -11], [-1, -14.4], [6.4, -12.4], [10.2, -6], [10.7, -1.5], sharp([12, 2.2]), [10.6, 3.5], [10.6, 5.6], [9.7, 7.4], [8.4, 10], sharp([5.2, 12]), [0.6, 10.2], [-4, 7], [-8, 3.6]],
+    square: [[-10.8, -3], [-8.4, -11.2], [-1, -14.6], [6.6, -12.6], [10.8, -6], [11.4, -1.4], sharp([13, 2.4]), [11.2, 3.8], [11.6, 6], [10.8, 8], sharp([10.6, 11]), [6.4, 13.4], [-0.4, 12.8], [-5.6, 9.4], [-8.6, 4.6]],
+    angular: [[-10.2, -3], [-7.8, -11.4], [-1, -14.8], [6.6, -12.8], [10.4, -6], [11, -1.4], sharp([12.8, 2.6]), [10.8, 3.8], [10.8, 5.8], [9.8, 7.6], [8.8, 10], sharp([6.2, 12.8]), [0.4, 10.6], [-4.2, 7], [-8, 3.6]],
     heavy: [[-11, -3], [-8.6, -11.4], [-1, -14.8], [6.8, -12.8], [10.8, -6.2], [11.6, -1.4], sharp([13, 2.6]), [11.4, 4], [11.8, 6.4], [11, 8.4], [10.6, 11.2], [6.4, 14], [-0.6, 13], [-6, 9.2], [-9.4, 4.4]],
   };
   function features(ctx, f, ex) {
@@ -483,8 +491,10 @@
       else { line([[3.6, -1.8], [6.3, 0.2], [9.2, -1.6]], 1.5); line([[3, -6.8], [9.6, -8.4]], fem ? 1.1 : 1.6, browCol); }
       ctx.fillStyle = '#5a1a1a'; ctx.beginPath(); ctx.ellipse(9.6, 7.6, ex === 'hurt' ? 1.5 : 0.9, ex === 'hurt' ? 2 : 0.7, 0, 0, 7); ctx.fill();
     } else {
-      const narrow = ex === 'fierce' ? 0.74 : 1;
-      ctx.save(); ctx.translate(6.3, -1.6); ctx.scale(1, narrow); ctx.translate(-6.3, 1.6);
+      const shape = f.b.eye || 'round', ek = f.b.eyeK || 1;
+      const vy = { round: 1.08, sharp: 0.8, narrow: 0.62, kind: 0.9 }[shape] * (ex === 'fierce' ? 0.74 : 1);
+      const rot = { round: 0, sharp: -0.2, narrow: -0.1, kind: 0.12 }[shape];
+      ctx.save(); ctx.translate(6.3, -1.6); ctx.rotate(rot); ctx.scale(ek, ek * vy); ctx.translate(-6.3, 1.6);
       const white = smooth([sharp([3, -3.4]), [6.1, -5.2], sharp([9.4, -4.2]), [9.2, -1], [7.8, 1.3], [4.6, 0.6]]);
       ctx.fillStyle = '#fffaf4'; ctx.fill(white);
       ctx.save(); ctx.clip(white);
@@ -499,8 +509,9 @@
       if (fem) { ctx.lineWidth = 1.1; ctx.beginPath(); ctx.moveTo(2.8, -3.3); ctx.lineTo(1.4, -4.6); ctx.moveTo(9.4, -4.3); ctx.lineTo(10.6, -4.9); ctx.stroke(); }
       ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(5, 1.1); ctx.quadraticCurveTo(7, 1.8, 8.8, 0.8); ctx.stroke();
       ctx.restore();
-      if (ex === 'fierce') line([[3, -6.6], [6.5, -6.6], [10, -4.9]], fem ? 1.3 : 2, browCol);
-      else line([[3.2, -7.4], [6.5, -8.4], [9.8, -7.4]], fem ? 1.1 : 1.8, browCol);
+      const bw = f.b.brow || (fem ? 1.1 : 1.8), bc = f.b.mark === 'wrinkles' ? '#e8e4dc' : browCol;
+      if (ex === 'fierce') line([[3, -6.6], [6.5, -6.6], [10, -4.9]], bw * 1.15, bc);
+      else line([[3.2, -7.4], [6.5, -8.4], [9.8, -7.4]], bw, bc);
       if (ex === 'fierce') { const m = smooth([[8.3, 6.6], [10.7, 6.4], [10.3, 8.6], [8.5, 8.3]]); ctx.fillStyle = '#3a1414'; ctx.fill(m); ctx.fillStyle = '#ffffff'; ctx.fillRect(8.5, 6.5, 2, 0.8); }
       else if (ex === 'win') line([[8, 6.5], [9.4, 8.4], [10.8, 6.3]], 1);
       else line([[8.6, 7.3], [10.4, 7.1]], 0.9);
@@ -512,7 +523,7 @@
     const c = f.c, ink = c.ink, H = HAIR[f.b.hair];
     ctx.save(); ctx.translate(J.head[0], J.head[1]); ctx.rotate(J.ha);
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    const face = smooth(FACES[f.B.face]);
+    const face = smooth(FACES[f.b.faceShape || f.B.face]);
     ctx.strokeStyle = ink; ctx.lineWidth = 3.2; ctx.stroke(face);
     cel(ctx, { p: face, c: c.skin, k: 2.6 });
     const ear = ellipse([-2.2, 1.4], 2.5, 3.5, 0.15);
@@ -524,6 +535,13 @@
     ctx.globalAlpha = 1; ctx.translate(0.8, 2.2); fronts.forEach((p) => ctx.fill(p));
     ctx.restore();
     features(ctx, f, ex);
+    if (f.b.mark) {
+      ctx.save(); ctx.lineCap = 'round';
+      if (f.b.mark === 'scar') { ctx.strokeStyle = 'rgba(120,40,40,.75)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(4.2, 2.2); ctx.lineTo(9.6, 4.8); ctx.stroke(); ctx.lineWidth = 0.6; [5.6, 7.2, 8.6].forEach((x) => { ctx.beginPath(); ctx.moveTo(x - 0.4, 2.4 + (x - 4.2) * 0.48); ctx.lineTo(x + 0.4, 4 + (x - 4.2) * 0.48); ctx.stroke(); }); }
+      if (f.b.mark === 'scarEye') { ctx.strokeStyle = 'rgba(110,45,40,.7)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(4.6, -9); ctx.lineTo(6.2, 3.6); ctx.stroke(); }
+      if (f.b.mark === 'wrinkles') { ctx.strokeStyle = mix(c.skin, ink, 0.5); ctx.lineWidth = 0.7; [[9.6, -3.6, 11.2, -4.6], [9.8, -2.2, 11.4, -2.4], [3, -9.6, 9, -10]].forEach(([a, b2, cc, d]) => { ctx.beginPath(); ctx.moveTo(a, b2); ctx.lineTo(cc, d); ctx.stroke(); }); ctx.beginPath(); ctx.moveTo(10.4, 3.8); ctx.quadraticCurveTo(9, 6, 9.2, 8.2); ctx.stroke(); }
+      ctx.restore();
+    }
     if (f.b.stubble) { ctx.save(); ctx.clip(face); ctx.fillStyle = mix(c.skin, c.hair, 0.3); ctx.globalAlpha = 0.45; ctx.fill(smooth([[1, 5.6], [6, 8.4], [9.4, 9.6], [8.6, 12.4], [3, 12], [-2.4, 8.4]])); ctx.restore(); }
     if (f.b.beard) {
       const bp = smooth([[-3, 5], [2, 9], [7, 11.5], [10.4, 9.6], [10.2, 12.6], sharp([7, 18]), [2, 15], [-3, 10]]);
@@ -581,7 +599,8 @@
       sg.addColorStop(0, 'rgba(0,0,0,.5)'); sg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = sg; ctx.beginPath(); ctx.ellipse(0, 0, 60 * o.s, 12 * o.s, 0, 0, 7); ctx.fill();
     }
-    ctx.scale(o.s * o.facing, o.s);
+    const sc = o.s * (f.b.scale || 1);
+    ctx.scale(sc * o.facing, sc);
     const lift = -J.ground - breath * 0.5 - (f.b.aura ? 3 + Math.sin(t * 2) * 1.5 : 0);
     ctx.translate(0, lift);
     RIM = o.rim || null;
@@ -609,7 +628,7 @@
     group(ctx, front, c.ink);
     ctx.restore();
     RIM = null;
-    const W = (q) => [o.x + q[0] * o.s * o.facing, o.y + (q[1] + lift) * o.s];
+    const W = (q) => [o.x + q[0] * sc * o.facing, o.y + (q[1] + lift) * sc];
     return { hand: W(J.armF.c), head: W(J.head), chest: W(J.At(J.T - 15, 0)) };
   };
 })();
