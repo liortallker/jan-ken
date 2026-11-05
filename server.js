@@ -9,8 +9,9 @@ const Referee = require('./public/referee.js');
 const PORT = process.env.PORT || 3000;
 const ROOT = path.join(__dirname, 'public');
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
-const FIGHTERS = ['hikari', 'kagero', 'tetsuo', 'hayato', 'shin', 'gonta', 'daigo', 'yuki'];
-const ARENAS = ['temple', 'bamboo', 'torii', 'pagoda', 'dojo', 'zen', 'castle', 'snow'];
+const FIGHTERS = ['hikari', 'kagero', 'tetsuo', 'hayato', 'shin', 'gonta', 'daigo', 'yuki', 'akane', 'koharu', 'kenji', 'matsu', 'tsumuji'];
+const ARENAS = ['temple', 'bamboo', 'torii', 'pagoda', 'dojo', 'zen', 'castle', 'snow', 'koi', 'moon', 'shrine', 'festival'];
+const FACES = ['neutral', 'win', 'fierce', 'shout', 'surprised', 'blink'];
 
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
@@ -87,6 +88,13 @@ wsLite.attach(server, '/ws', (ws) => {
         r.players.b = { ws, profile: cleanProfile(m.profile) };
         ws.room = r.code; ws.side = 'b';
         startMatch(r);
+        break;
+      }
+      case 'face': {
+        if (!room || !FACES.includes(m.ex)) return;
+        const other = room.players[ws.side === 'a' ? 'b' : 'a'];
+        const tilt = Number.isFinite(m.tilt) ? Math.max(-20, Math.min(20, m.tilt)) : 0;
+        if (other) send(other.ws, { t: 'face', ex: m.ex, tilt });
         break;
       }
       case 'pick':
