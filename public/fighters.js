@@ -89,6 +89,9 @@
     }
     ctx.restore();
   }
+  function blossoms(ctx, pts) {
+    pts.forEach((p) => { for (let k = 0; k < 5; k++) { const a = (k * Math.PI * 2) / 5; ctx.fillStyle = '#f4a6c4'; ctx.beginPath(); ctx.arc(p[0] + Math.cos(a) * 1.8, p[1] + Math.sin(a) * 1.8, 1.5, 0, 7); ctx.fill(); } ctx.fillStyle = '#f0c060'; ctx.beginPath(); ctx.arc(p[0], p[1], 0.9, 0, 7); ctx.fill(); });
+  }
   function flakes(ctx, pts, color) {
     ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 0.9; ctx.lineCap = 'round';
     pts.forEach((p) => { for (let k = 0; k < 3; k++) { const a = (k * Math.PI) / 3; ctx.beginPath(); ctx.moveTo(p[0] - Math.cos(a) * 3, p[1] - Math.sin(a) * 3); ctx.lineTo(p[0] + Math.cos(a) * 3, p[1] + Math.sin(a) * 3); ctx.stroke(); } });
@@ -136,6 +139,31 @@
       desc: 'A pale kimono patterned with ice crystals, an ice-blue obi and a river of white hair. The air turns cold before she moves.',
       c: { skin: '#fbeef0', hair: '#eef3fb', eye: '#3f9fd6', top: '#f2f7fb', top2: '#9fd3f0', lapel: '#cfe8f6', pants: '#f2f7fb', belt: '#7cc3e8', cord: '#ffffff', accent: '#9fd3f0', feet: '#ffffff', ink: '#2a3a52' },
       b: { body: 'fem', top: 'kimono', sleeve: 'wide', legs: 'robe', feet: 'tabi', hair: 'yuki', belt: 'obi', fem: true, pattern: 'snow', aura: true, scale: 0.96, eye: 'round', eyeK: 1.22 } },
+    { id: 'akane', name: 'AKANE', style: 'Festival Taiko Drummer', stance: 'Wide drummer stance', idle: 'drummer', stats: { speed: 4, poise: 3, weight: 3 },
+      req: { type: 'secret', key: 'combo', hint: 'The drum keeps rhythm: stone, cloth, blade.' },
+      desc: 'A red festival coat swirling with white waves and a pair of drumsticks across her back. She fights to a rhythm only she can hear.',
+      c: { skin: '#efc3a4', hair: '#2a1410', eye: '#5a2a1a', top: '#c8321f', lapel: '#f4efe6', pants: '#1c1a22', belt: '#f4efe6', accent: '#f4efe6', trim: '#e0b040', feet: '#f4efe6', ink: '#2a1210' },
+      b: { body: 'fem', top: 'gi', sleeve: 'none', legs: 'tight', feet: 'tabi', hair: 'akane', belt: 'belt', fem: true, pattern: 'waves', bachi: true, scale: 0.97, eye: 'sharp', eyeK: 1 } },
+    { id: 'koharu', name: 'KOHARU', style: 'Fan Dancer', stance: 'Graceful fan pose', idle: 'fanpose', stats: { speed: 4, poise: 5, weight: 1 },
+      req: { type: 'wins', n: 8, label: 'Win 8 matches (online or practice)' },
+      desc: 'A layered plum-and-gold kimono, a blossom pin in her hair and twin folding fans that flick open like wings.',
+      c: { skin: '#f7dccb', hair: '#141018', eye: '#6a2a5a', top: '#7a2a5c', top2: '#f0c060', lapel: '#f3e6d0', pants: '#7a2a5c', belt: '#e0b040', cord: '#c8341f', accent: '#f0c060', feet: '#ffffff', ink: '#2a1020' },
+      b: { body: 'fem', top: 'kimono', sleeve: 'wide', legs: 'robe', feet: 'tabi', hair: 'koharu', belt: 'obi', fem: true, fans: true, pattern: 'blossom', scale: 0.95, eye: 'round', eyeK: 1.1 } },
+    { id: 'kenji', name: 'KENJI', style: 'Kendo Bare-Hand Arts', stance: 'Center-line kendo guard', idle: 'kendo', stats: { speed: 3, poise: 5, weight: 4 },
+      req: { type: 'streak', n: 3, label: 'Play on 3 days in a row' },
+      desc: 'An indigo practice uniform under a black lacquered chest guard and padded gauntlets. Patient, upright, impossible to rush.',
+      c: { skin: '#e6b896', hair: '#15141c', eye: '#2a2a3a', top: '#26305a', lapel: '#2f3a6a', pants: '#1d2546', accent: '#7a1f1a', hands: '#1d2546', ink: '#0e1020' },
+      b: { body: 'male', top: 'kendo', sleeve: 'gi', legs: 'hakama', feet: 'bare', hair: 'kenji', scale: 1.03, eye: 'narrow', eyeK: 0.95, brow: 2 } },
+    { id: 'matsu', name: 'MATSU', style: 'Festival Oni Dancer', stance: 'Bouncing festival step', idle: 'festival', stats: { speed: 5, poise: 2, weight: 3 },
+      req: { type: 'secret', key: 'flawless', label: 'Win a match without losing a single clash' },
+      desc: 'A blue festival coat, a grinning red oni mask pushed up on his head and endless energy. He never stops moving.',
+      c: { skin: '#dba889', hair: '#2a1a12', eye: '#3a2a1a', top: '#2a5aa8', lapel: '#f4efe6', pants: '#f4efe6', belt: '#f4efe6', accent: '#e8e2d4', trim: '#c8341f', feet: '#e8e2d4', ink: '#141020' },
+      b: { body: 'lean', top: 'gi', sleeve: 'kimono', legs: 'tight', feet: 'zori', hair: 'matsu', belt: 'belt', pattern: 'waves', scale: 1, eye: 'round', eyeK: 0.95 } },
+    { id: 'tsumuji', name: 'TSUMUJI', style: 'Spirit of the Divine Wind', stance: 'Hovering whirlwind stance', idle: 'drift', stats: { speed: 5, poise: 5, weight: 2 },
+      req: { type: 'secret', key: 'kamikaze', hint: 'Some words open doors. Speak the divine wind where rooms are joined.' },
+      desc: 'Storm-teal robes, endless trailing sashes and silver hair that never settles. Some say the wind itself chose a body.',
+      c: { skin: '#f2dccd', hair: '#d6efe8', eye: '#2aa59a', top: '#1f6f6a', top2: '#e0f4ef', lapel: '#bfe6dc', pants: '#1f6f6a', belt: '#e0f4ef', cord: '#2aa59a', accent: '#e0f4ef', trim: '#e0f4ef', feet: '#ffffff', ink: '#0c2a28' },
+      b: { body: 'lean', top: 'kimono', sleeve: 'wide', legs: 'robe', feet: 'tabi', hair: 'tsumuji', belt: 'obi', scarf: true, aura: 'wind', scale: 1.04, eye: 'sharp', eyeK: 1 } },
   ];
   JK.FIGHTERS.forEach((f) => (f.B = Object.assign({}, BODY[f.b.body])));
   JK.FIGHTER = Object.fromEntries(JK.FIGHTERS.map((f) => [f.id, f]));
@@ -151,6 +179,10 @@
     shiko: PO({ lean: 12, head: -10, sa1: 62, ea1: 34, sa2: 42, ea2: 48, hl1: 52, kl1: -56, hl2: -50, kl2: 54, h1: 'palm', h2: 'open', bob: 0.6 }),
     prayer: PO({ lean: 3, head: 4, sa1: 22, ea1: 128, sa2: 8, ea2: 96, hl1: 16, kl1: -7, hl2: -16, kl2: -4, h1: 'palm', h2: 'relax' }),
     drift: PO({ lean: -2, head: -4, sa1: 72, ea1: 28, sa2: -62, ea2: 38, hl1: 10, kl1: -16, hl2: -12, kl2: -12, h1: 'open', h2: 'open', bob: 1.4 }),
+    drummer: PO({ lean: 6, head: -6, sa1: 128, ea1: 42, sa2: -18, ea2: 96, hl1: 32, kl1: -22, hl2: -32, kl2: -10, h1: 'fist', h2: 'fist' }),
+    fanpose: PO({ lean: 2, head: -6, sa1: 104, ea1: 48, sa2: -34, ea2: 62, hl1: 10, kl1: -14, hl2: -12, kl2: -8, h1: 'open', h2: 'open', bob: 1.2 }),
+    kendo: PO({ lean: 4, head: -2, sa1: 52, ea1: 64, sa2: 34, ea2: 76, hl1: 18, kl1: -6, hl2: -20, kl2: -6, h1: 'fist', h2: 'fist' }),
+    festival: PO({ lean: 8, head: -8, sa1: 74, ea1: 58, sa2: -42, ea2: 82, hl1: 30, kl1: -30, hl2: -26, kl2: -20, h1: 'open', h2: 'open', bob: 1.7 }),
     windup: PO({ lean: -6, head: 6, sa1: -38, ea1: 118, sa2: 52, ea2: 60, hl1: 34, kl1: -38, hl2: -32, kl2: -4, bob: 0, ex: 'fierce' }),
     rock: PO({ lean: 20, head: -10, sa1: 89, ea1: 2, sa2: -16, ea2: 128, hl1: 50, kl1: -36, hl2: -44, kl2: 0, h1: 'fist', h2: 'fist', bob: 0, ex: 'fierce' }),
     paper: PO({ lean: 15, head: -8, sa1: 84, ea1: 10, sa2: 30, ea2: 96, hl1: 46, kl1: -32, hl2: -40, kl2: -2, h1: 'palm', h2: 'fist', bob: 0, ex: 'fierce' }),
@@ -256,7 +288,31 @@
     if (!back && kind === 'bare') L.push({ fn: (ctx) => { ctx.strokeStyle = c.ink; ctx.globalAlpha = 0.35; ctx.lineWidth = 1; ctx.stroke(smooth([lerp(leg.a, leg.b, 0.3), add(lerp(leg.a, leg.b, 0.7), [3, 0]), leg.b], false)); } });
     if (!back && f.b.pattern === 'brush') L.push({ fn: (ctx) => brush(ctx, lerp(leg.a, leg.b, 0.25), lerp(leg.b, leg.c, 0.7), c.accent, 5.5) });
   }
+  function fan(L, arm, handType, f, back) {
+    const X = dir(arm.a2), ang = Math.atan2(X[1], X[0]), c = f.c;
+    const open = handType === 'open' || handType === 'palm' || handType === 'relax';
+    L.push({ fn: (ctx) => {
+      ctx.save(); ctx.translate(arm.c[0] + X[0] * 6, arm.c[1] + X[1] * 6); ctx.rotate(ang);
+      if (open) {
+        const R = 24, a0 = -1.15, a1 = 1.15;
+        const pth = new Path2D(); pth.moveTo(0, 0); pth.arc(0, 0, R, a0, a1); pth.closePath();
+        const g = ctx.createRadialGradient(0, 0, 4, 0, 0, R); g.addColorStop(0, '#f7e6c8'); g.addColorStop(0.6, back ? '#c26a90' : '#f2a0c0'); g.addColorStop(1, back ? '#a0506e' : '#e0789e');
+        ctx.fillStyle = g; ctx.fill(pth); ctx.strokeStyle = c.ink; ctx.lineWidth = 1.2; ctx.stroke(pth);
+        ctx.strokeStyle = 'rgba(80,30,40,.45)'; ctx.lineWidth = 0.6;
+        for (let i = 0; i <= 8; i++) { const a = a0 + ((a1 - a0) * i) / 8; ctx.beginPath(); ctx.moveTo(Math.cos(a) * 5, Math.sin(a) * 5); ctx.lineTo(Math.cos(a) * R, Math.sin(a) * R); ctx.stroke(); }
+        ctx.strokeStyle = '#e0b040'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(0, 0, R - 1.2, a0, a1); ctx.stroke();
+        ctx.fillStyle = '#f4f4f4'; [[0.3, 14], [-0.4, 18], [0.6, 19]].forEach(([a, r]) => { ctx.beginPath(); ctx.arc(Math.cos(a) * r, Math.sin(a) * r, 1.6, 0, 7); ctx.fill(); });
+      } else {
+        ctx.fillStyle = '#7a3a28'; ctx.strokeStyle = c.ink; ctx.lineWidth = 0.9; ctx.beginPath(); ctx.roundRect(-2, -2.2, 22, 4.4, 2); ctx.fill(); ctx.stroke();
+      }
+      ctx.restore();
+    } });
+  }
   function armParts(L, J, arm, f, back, handType, sw) {
+    if (f.b.fans) { armPartsBase(L, J, arm, f, back, handType, sw); fan(L, arm, handType, f, back); return; }
+    armPartsBase(L, J, arm, f, back, handType, sw);
+  }
+  function armPartsBase(L, J, arm, f, back, handType, sw) {
     const b = f.B, c = f.c, kind = f.b.sleeve;
     const dk = back ? (x) => mix(x, '#140b1c', 0.24) : (x) => x;
     const top = dk(c.top), skin = dk(c.skin), ua = b.ua, fa = b.fa;
@@ -319,6 +375,7 @@
     const line = (k) => { const a = lerp(t0, t1, k), z = lerp(h0, h1, k); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(z[0], z[1]); ctx.stroke(); };
     if (f.b.pattern === 'stripes') { ctx.strokeStyle = mix(c.pants, '#000000', 0.35); ctx.lineWidth = 1.6; for (let i = 0; i <= 12; i++) line(i / 12); }
     if (f.b.pattern === 'snow') flakes(ctx, [[0.3, 0.4], [0.7, 0.6], [0.5, 0.85], [0.2, 0.8], [0.85, 0.3]].map(([u, v]) => lerp(lerp(t0, t1, u), lerp(h0, h1, u), v)), '#9fd3f0');
+    if (f.b.pattern === 'blossom') blossoms(ctx, [[0.3, 0.4], [0.7, 0.6], [0.5, 0.85], [0.2, 0.8], [0.85, 0.3], [0.55, 0.3]].map(([u, v]) => lerp(lerp(t0, t1, u), lerp(h0, h1, u), v)));
     ctx.strokeStyle = c.ink; ctx.globalAlpha = 0.38; ctx.lineWidth = 0.9;
     [0.22, 0.45, 0.68, 0.88].forEach(line);
   }
@@ -335,6 +392,12 @@
     ctx.clip(jk);
     if (f.b.pattern === 'brush') { brush(ctx, A(T - 8, -b.ch * 0.4), A(14, b.wa * 0.5), c.accent, 6); brush(ctx, A(T - 26, -b.wa * 0.5), A(-6, b.hip * 0.3), c.accent, 4); }
     if (f.b.pattern === 'snow') flakes(ctx, [A(T - 10, -b.ch * 0.2), A(T - 24, b.ch * 0.25), A(22, -b.wa * 0.2), A(T - 14, b.ch * 0.42)], '#9fd3f0');
+    if (f.b.pattern === 'waves') {
+      ctx.strokeStyle = c.lapel || '#ffffff'; ctx.globalAlpha = 0.75; ctx.lineWidth = 1;
+      for (let s2 = -12, r = 0; s2 < T; s2 += 6, r++) for (let w = -30 + (r % 2) * 3.5; w < 30; w += 7) { const q = A(s2, w); ctx.beginPath(); ctx.arc(q[0], q[1], 3.4, Math.PI, 0); ctx.stroke(); ctx.beginPath(); ctx.arc(q[0], q[1], 1.8, Math.PI, 0); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+    }
+    if (f.b.pattern === 'blossom') blossoms(ctx, [A(T - 10, -b.ch * 0.2), A(T - 22, b.ch * 0.3), A(20, -b.wa * 0.2), A(T - 14, b.ch * 0.45), A(10, b.wa * 0.3)]);
     if (f.b.pattern === 'checker') {
       ctx.strokeStyle = '#9c8a64'; ctx.globalAlpha = 0.3; ctx.lineWidth = 0.8;
       for (let s = -14; s < T + 4; s += 5) { const a = A(s, -40), z = A(s, 40); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(z[0], z[1]); ctx.stroke(); }
@@ -409,13 +472,19 @@
     L.push(P(smooth(torsoPts(J, b)), top === 'bare' ? c.skin : c.top, { k: 4 }));
     if (top === 'bare') L.push({ fn: (ctx) => muscles(ctx, J, f) });
     if (!robe) legParts(L, J, J.legF, f, false);
-    if (['gi', 'miko', 'kimono', 'yamabushi'].includes(top)) {
+    if (['gi', 'miko', 'kimono', 'yamabushi', 'kendo'].includes(top)) {
       const jk = smooth(torsoPts(J, b, 2.2, legs === 'hakama' ? 3 : robe ? 0 : 11));
       L.push(P(jk, c.top, { k: 4 }));
       collar(L, J, f);
       L.push({ fn: (ctx) => jacketDetail(ctx, J, f, jk) });
     }
     if (top === 'armor') armor(L, J, f);
+    if (top === 'kendo') {
+      L.push(P(smooth([A(T - 9, b.ch * 0.52 + 2), A(T - 20, b.ch * 0.62 + 3), A(15, b.wa * 0.62 + 3), sharp(A(12, -b.wa * 0.1)), A(T - 22, -b.ch * 0.25), A(T - 8, -b.sh * 0.05)]), '#17171c', { k: 3, line: 1 }));
+      L.push({ fn: (ctx) => { ctx.strokeStyle = '#7a1f1a'; ctx.lineWidth = 2.2; ctx.stroke(smooth([A(T - 9, b.ch * 0.5), A(T - 9, -b.sh * 0.04)], false)); ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.4; ctx.stroke(smooth([A(T - 14, b.ch * 0.45), A(T - 22, b.ch * 0.55), A(18, b.wa * 0.55)], false)); } });
+      for (let i = 0; i < 3; i++) L.push(P(limbPath(A(7, b.hip * 0.52 - i * 8), A(-15, b.hip * 0.58 - i * 8), 4.2, 4.5, 4.5), '#1a2142', { k: 1.5, line: 0.9 }));
+      L.push(P(polyPath([A(4, b.hip * 0.62), A(-9, b.hip * 0.64), A(-9, b.hip * 0.2), A(4, b.hip * 0.18)]), '#f2f0ea', { k: 1, line: 0.8 }));
+    }
     if (top === 'bare') mawashi(L, J, f);
     belt(L, J, f, sw, t);
     if (top === 'yamabushi') pompoms(L, J, f);
@@ -466,6 +535,42 @@
         ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.stroke(cap); cel(ctx, { p: cap, c: '#1a1a1a', k: 1.2 });
       },
     },
+    akane: {
+      back: (s) => [[-6, -14], [-12 + s[0] * 0.3, -16 + s[1] * 0.2], [-21 + s[0] * 1.3, -12 + s[1] * 1.2], sharp([-29 + s[0] * 1.9, -2 + s[1] * 1.9]), [-22 + s[0] * 1.3, -5 + s[1]], sharp([-24 + s[0] * 1.5, 5 + s[1] * 1.6]), [-15 + s[0] * 0.8, -4 + s[1] * 0.6], [-9, -8]],
+      backParts: (s) => [[limbPath([-10, -6.4], [-21 + s[0] * 1.3, -2 + s[1] * 1.1], 1.7, 1.9, 1.4), '#c8321f'], [limbPath([-10, -6.4], [-19 + s[0] * 1.1, 5 + s[1] * 1.3], 1.6, 1.8, 1.3), '#c8321f']],
+      front: () => [[sharp([-8, 3]), [-11, -5], [-7, -13.6], [0, -15.6], [7, -14.4], [11.6, -9.6], sharp([12.4, -4]), [9, -6.8], sharp([7.6, -2.6]), [5, -7.6], sharp([2.4, -3.4]), [0, -7.4], [-3, -3], sharp([-5, 2.6])]],
+      top: (ctx, s, c) => { const band = polyPath([[-11, -7.8], [12, -10], [12.3, -6.8], [-10.8, -4.2]]); ctx.fillStyle = '#c8321f'; ctx.fill(band); ctx.strokeStyle = c.ink; ctx.lineWidth = 0.9; ctx.stroke(band); ctx.fillStyle = '#c8321f'; ctx.beginPath(); ctx.arc(-10.4, -6, 2.2, 0, 7); ctx.fill(); },
+    },
+    koharu: {
+      backParts: () => [[ellipse([-9.5, -12.5], 6.5, 5.4, -0.4), '#141018'], [limbPath([-6, -2], [-8, 10], 2.6, 2.8, 1.6), '#141018']],
+      front: () => [[[-10.5, -1], [-11.4, -10], [-4.4, -15.6], [4.6, -15.6], [10.8, -11.2], sharp([12.4, -4.4]), sharp([1.6, -4.6]), [-2.2, -4.4], sharp([-4.4, 3.4]), sharp([-7.2, 4])]],
+      top: (ctx, s, c) => {
+        [[-12, -16, 2.6, '#f4a6c4'], [-8.6, -18.4, 2.2, '#f7c3d6'], [-14.6, -12.6, 2, '#f4a6c4']].forEach(([x, y, r, col]) => { for (let k = 0; k < 5; k++) { const a = (k * Math.PI * 2) / 5; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x + Math.cos(a) * r * 0.7, y + Math.sin(a) * r * 0.7, r * 0.6, 0, 7); ctx.fill(); } ctx.fillStyle = '#e0b040'; ctx.beginPath(); ctx.arc(x, y, r * 0.35, 0, 7); ctx.fill(); });
+        ctx.strokeStyle = '#e0b040'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(-12, -14); ctx.lineTo(-13 + s[0] * 0.3, -6 + s[1] * 0.3); ctx.moveTo(-12, -14); ctx.lineTo(-15 + s[0] * 0.3, -7 + s[1] * 0.3); ctx.stroke();
+      },
+    },
+    kenji: {
+      front: () => [[sharp([-9, 3]), [-11.2, -5.5], [-7.6, -13], [-0.5, -15.8], [7, -14], [11.6, -9], sharp([11.6, -4.6]), [8.6, -8], [4.6, -9.6], [1, -8.4], [-2.6, -6.4], sharp([-5.4, 1.6])]],
+      backParts: (s) => [[limbPath([-10.4, -7], [-17 + s[0] * 0.8, -1 + s[1] * 0.8], 1.8, 2, 1.6), '#f2f0ea']],
+      top: (ctx, s, c) => { const band = polyPath([[-11.2, -9.6], [11.8, -11.6], [12.2, -7.6], [-10.8, -5.4]]); ctx.fillStyle = '#f2f0ea'; ctx.fill(band); ctx.strokeStyle = c.ink; ctx.lineWidth = 0.9; ctx.stroke(band); ctx.strokeStyle = '#2f3a6a'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(-10, -7.6); ctx.lineTo(11.6, -9.6); ctx.stroke(); },
+    },
+    matsu: {
+      front: (s) => [[sharp([-8, 3]), [-11, -3], sharp([-17 + s[0], -6 + s[1]]), [-12, -10], sharp([-14 + s[0], -17 + s[1]]), [-6, -14.5], sharp([-2, -21 + s[1] * 0.5]), [1, -15.5], sharp([7, -19 + s[1] * 0.5]), [7.5, -13.5], sharp([13, -11]), [10.5, -8], sharp([12, -3.4]), [7.4, -6.6], sharp([4, -3.4]), [1.4, -7], [-2, -3], sharp([-4.5, 2])]],
+      top: (ctx, s, c) => {
+        ctx.save(); ctx.translate(-7.5, -12.5); ctx.rotate(-0.7);
+        const face = smooth([[-6, -4], [0, -7.5], [6, -4], [6.6, 3], [3, 7.5], [-3, 7.5], [-6.6, 3]]);
+        [[-4.6, -5.6, -6.2, -11.4, -2.2, -6.6], [4.6, -5.6, 6.2, -11.4, 2.2, -6.6]].forEach(([a, b2, cx, cy, d, e]) => { const h = polyPath([[a, b2], [cx, cy], [d, e]]); ctx.fillStyle = '#f0e6d0'; ctx.fill(h); ctx.strokeStyle = c.ink; ctx.lineWidth = 0.9; ctx.stroke(h); });
+        ctx.strokeStyle = c.ink; ctx.lineWidth = 2; ctx.stroke(face); cel(ctx, { p: face, c: '#c8321f', k: 1.6 });
+        ctx.fillStyle = '#f0c040'; [[-2.8, -0.8], [2.8, -0.8]].forEach(([x, y]) => { ctx.beginPath(); ctx.ellipse(x, y, 1.6, 0.9, x < 0 ? 0.3 : -0.3, 0, 7); ctx.fill(); });
+        ctx.strokeStyle = '#141014'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(-4.6, -3.4); ctx.lineTo(-1.2, -2); ctx.moveTo(4.6, -3.4); ctx.lineTo(1.2, -2); ctx.stroke();
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(-3.6, 3.4); for (let i = 0; i <= 6; i++) ctx.lineTo(-3.6 + i * 1.2, i % 2 ? 5.4 : 3.4); ctx.lineTo(3.6, 3.4); ctx.closePath(); ctx.fill();
+        ctx.restore();
+      },
+    },
+    tsumuji: {
+      back: (s) => [[-4, -14.6], [-12, -10.6], [-16 + s[0] * 0.4, -1 + s[1] * 0.3], [-22 + s[0] * 1.2, 8 + s[1] * 0.9], sharp([-32 + s[0] * 2, 14 + s[1] * 1.6]), [-20 + s[0], 14 + s[1]], sharp([-26 + s[0] * 1.6, 26 + s[1] * 1.8]), [-12 + s[0] * 0.6, 16 + s[1] * 0.6], [-7, 6], [0, -6]],
+      front: (s) => [[sharp([-8, 3]), [-11.4, -6], [-6, -14.6], [2, -16], [9, -13.6], sharp([14 + s[0] * 0.3, -6 + s[1] * 0.2]), [9.4, -7.4], sharp([10 + s[0] * 0.3, 0.4 + s[1] * 0.3]), [6.6, -6.4], sharp([5, -1.6]), [2.4, -7.4], [-1.6, -5], sharp([-4.6, 2.4])]],
+    },
     yuki: {
       back: (s) => [[-4, -14.6], [-12, -10.6], [-16, -1], [-18 + s[0] * 0.6, 13 + s[1] * 0.6], sharp([-23 + s[0] * 1.4, 29 + s[1] * 1.5]), [-16 + s[0], 26 + s[1]], sharp([-14 + s[0] * 0.9, 38 + s[1] * 1.6]), [-9 + s[0] * 0.4, 22 + s[1] * 0.6], [-6, 7], [0, -6]],
       front: () => [[[-10.5, -1], [-11.4, -10], [-4.4, -15.6], [4.6, -15.6], [10.8, -11.2], sharp([12.4, -4.4]), sharp([1.6, -4.6]), [-2.2, -4.4], sharp([-4.4, 3.4]), sharp([-7.2, 4])],
@@ -486,13 +591,17 @@
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const browCol = mix(c.hair, ink, 0.45);
     const line = (pts, w, col) => { ctx.strokeStyle = col || ink; ctx.lineWidth = w; ctx.stroke(smooth(pts, false)); };
-    if (ex === 'hurt' || ex === 'ko') {
+    if (ex === 'blink') {
+      line([[3.2, -1.6], [6.3, -0.4], [9.4, -1.8]], fem ? 1.6 : 1.5);
+      line([[3.2, -7.4], [6.5, -8.4], [9.8, -7.4]], f.b.brow || (fem ? 1.1 : 1.8), browCol);
+      line([[8.6, 7.3], [10.4, 7.1]], 0.9);
+    } else if (ex === 'hurt' || ex === 'ko') {
       if (ex === 'hurt') { line([[3.6, -4.6], [8.6, -1.9], [3.9, 0.8]], 1.6); line([[3, -8.6], [6.5, -9.8], [9.8, -8.2]], fem ? 1.1 : 1.7, browCol); }
       else { line([[3.6, -1.8], [6.3, 0.2], [9.2, -1.6]], 1.5); line([[3, -6.8], [9.6, -8.4]], fem ? 1.1 : 1.6, browCol); }
       ctx.fillStyle = '#5a1a1a'; ctx.beginPath(); ctx.ellipse(9.6, 7.6, ex === 'hurt' ? 1.5 : 0.9, ex === 'hurt' ? 2 : 0.7, 0, 0, 7); ctx.fill();
     } else {
       const shape = f.b.eye || 'round', ek = f.b.eyeK || 1;
-      const vy = { round: 1.08, sharp: 0.8, narrow: 0.62, kind: 0.9 }[shape] * (ex === 'fierce' ? 0.74 : 1);
+      const vy = { round: 1.08, sharp: 0.8, narrow: 0.62, kind: 0.9 }[shape] * (ex === 'fierce' || ex === 'shout' ? 0.74 : ex === 'surprised' ? 1.3 : ex === 'win' ? 0.85 : 1);
       const rot = { round: 0, sharp: -0.2, narrow: -0.1, kind: 0.12 }[shape];
       ctx.save(); ctx.translate(6.3, -1.6); ctx.rotate(rot); ctx.scale(ek, ek * vy); ctx.translate(-6.3, 1.6);
       const white = smooth([sharp([3, -3.4]), [6.1, -5.2], sharp([9.4, -4.2]), [9.2, -1], [7.8, 1.3], [4.6, 0.6]]);
@@ -510,10 +619,13 @@
       ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(5, 1.1); ctx.quadraticCurveTo(7, 1.8, 8.8, 0.8); ctx.stroke();
       ctx.restore();
       const bw = f.b.brow || (fem ? 1.1 : 1.8), bc = f.b.mark === 'wrinkles' ? '#e8e4dc' : browCol;
-      if (ex === 'fierce') line([[3, -6.6], [6.5, -6.6], [10, -4.9]], bw * 1.15, bc);
+      if (ex === 'fierce' || ex === 'shout') line([[3, -6.6], [6.5, -6.6], [10, -4.9]], bw * 1.15, bc);
+      else if (ex === 'surprised') line([[3, -9.2], [6.5, -10.8], [9.8, -9.4]], bw, bc);
       else line([[3.2, -7.4], [6.5, -8.4], [9.8, -7.4]], bw, bc);
-      if (ex === 'fierce') { const m = smooth([[8.3, 6.6], [10.7, 6.4], [10.3, 8.6], [8.5, 8.3]]); ctx.fillStyle = '#3a1414'; ctx.fill(m); ctx.fillStyle = '#ffffff'; ctx.fillRect(8.5, 6.5, 2, 0.8); }
-      else if (ex === 'win') line([[8, 6.5], [9.4, 8.4], [10.8, 6.3]], 1);
+      if (ex === 'shout') { const m = smooth([[7.6, 6], [11.2, 5.6], [10.9, 9.8], [8.8, 10.6], [7.8, 9]]); ctx.fillStyle = '#3a1414'; ctx.fill(m); ctx.strokeStyle = ink; ctx.lineWidth = 0.8; ctx.stroke(m); ctx.fillStyle = '#ffffff'; ctx.fillRect(8, 5.9, 3, 1); ctx.fillStyle = '#c0404a'; ctx.beginPath(); ctx.ellipse(9.4, 9.6, 1.2, 0.6, 0, 0, 7); ctx.fill(); }
+      else if (ex === 'surprised') { ctx.fillStyle = '#3a1414'; ctx.beginPath(); ctx.ellipse(9.5, 7.7, 1.1, 1.6, 0, 0, 7); ctx.fill(); }
+      else if (ex === 'fierce') { const m = smooth([[8.3, 6.6], [10.7, 6.4], [10.3, 8.6], [8.5, 8.3]]); ctx.fillStyle = '#3a1414'; ctx.fill(m); ctx.fillStyle = '#ffffff'; ctx.fillRect(8.5, 6.5, 2, 0.8); }
+      else if (ex === 'win') { const m = smooth([[7.8, 6.2], [11, 6], [10, 8.6], [8.6, 8.4]]); ctx.fillStyle = '#4a1818'; ctx.fill(m); ctx.strokeStyle = ink; ctx.lineWidth = 0.8; ctx.stroke(m); ctx.fillStyle = '#ffffff'; ctx.fillRect(8, 6, 2.8, 0.9); }
       else line([[8.6, 7.3], [10.4, 7.1]], 0.9);
     }
     line([[11, 0.5], [12, 2.1], [10.8, 2.9]], 0.9, mix(c.skin, ink, 0.45));
@@ -570,6 +682,11 @@
       L.push(P(smooth([add(hc, mul(ax, 18)), sharp(tip), add(hc, mul(ax, -18)), add(add(hc, mul(ax, -10)), mul(up, 3)), add(add(hc, mul(ax, 10)), mul(up, 3))]), '#c9a35b', { k: 2.5 }));
       L.push({ fn: (ctx) => { ctx.strokeStyle = '#8a6a32'; ctx.lineWidth = 0.8; for (let i = -2; i <= 2; i++) { const e = add(hc, mul(ax, i * 7)); ctx.beginPath(); ctx.moveTo(tip[0], tip[1]); ctx.lineTo(e[0], e[1]); ctx.stroke(); } ctx.strokeStyle = '#5a2a1a'; ctx.lineWidth = 1; const n = A(J.T + 1, 2); ctx.beginPath(); ctx.moveTo(n[0], n[1]); ctx.lineTo(tip[0], tip[1]); ctx.stroke(); } });
     }
+    if (f.b.bachi) {
+      const a1 = A(J.T - 34, -b.ch * 0.5 - 6), b1 = A(J.T + 8, -b.ch * 0.5 + 6), a2 = A(J.T - 34, -b.ch * 0.5 + 6), b2 = A(J.T + 8, -b.ch * 0.5 - 8);
+      L.push(P(limbPath(a1, b1, 1.6, 1.7, 2.2), '#d9b27a', { k: 1, line: 0.8 }));
+      L.push(P(limbPath(a2, b2, 1.6, 1.7, 2.2), '#d9b27a', { k: 1, line: 0.8 }));
+    }
     if (f.b.scarf) {
       const base = A(J.T + 1, -4), tp = [], bt = [];
       for (let i = 0; i <= 6; i++) {
@@ -586,6 +703,7 @@
   JK.drawFighter = function (ctx, fid, pose, o) {
     const f = JK.FIGHTER[fid], c = f.c, t = o.t || 0;
     const p = Object.assign({}, pose);
+    if (o.face && Number.isFinite(o.face.tilt)) p.head += Math.max(-18, Math.min(18, o.face.tilt));
     const breath = Math.sin(t * 2.4) * (p.bob || 0);
     p.lean += breath * 1.1; p.sa1 += breath * 1.8; p.sa2 -= breath * 1.4; p.head -= breath * 0.8;
     const J = solve(p, f);
@@ -607,9 +725,14 @@
     if (o.alpha != null) ctx.globalAlpha = o.alpha;
     if (f.b.aura) {
       const cc = J.At(30, 0), g = ctx.createRadialGradient(cc[0], cc[1], 5, cc[0], cc[1], 95);
-      g.addColorStop(0, 'rgba(190,230,255,.35)'); g.addColorStop(1, 'rgba(190,230,255,0)');
+      const wind = f.b.aura === 'wind';
+      g.addColorStop(0, wind ? 'rgba(150,235,215,.3)' : 'rgba(190,230,255,.35)'); g.addColorStop(1, 'rgba(190,230,255,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cc[0], cc[1], 95, 0, 7); ctx.fill();
-      for (let i = 0; i < 12; i++) {
+      if (wind) {
+        ctx.strokeStyle = 'rgba(210,250,240,.75)'; ctx.lineCap = 'round';
+        for (let i = 0; i < 9; i++) { const ph = (t * (0.5 + (i % 3) * 0.2) + i * 0.37) % 1, r = 28 + (i % 4) * 14, a0 = ph * Math.PI * 2 + i, yy = cc[1] + 40 - i * 13; ctx.lineWidth = 1.4 + (i % 2); ctx.beginPath(); ctx.ellipse(cc[0], yy, r, r * 0.28, 0, a0, a0 + 1.4); ctx.stroke(); }
+      }
+      for (let i = 0; i < (wind ? 0 : 12); i++) {
         const a = t * 0.6 + i * 0.53, r = 36 + ((i * 37) % 34), x = cc[0] + Math.cos(a) * r, y = cc[1] + 40 - ((t * 22 + i * 23) % 130);
         ctx.fillStyle = 'rgba(235,248,255,.85)'; ctx.beginPath(); ctx.moveTo(x, y - 2.8); ctx.lineTo(x + 1.2, y); ctx.lineTo(x, y + 2.8); ctx.lineTo(x - 1.2, y); ctx.fill();
       }
@@ -622,7 +745,9 @@
     const body = [];
     bodyParts(body, J, f, t, sw);
     group(ctx, body, c.ink);
-    drawHead(ctx, J, f, p.ex || 'calm', t, s);
+    let ex = p.ex || 'calm';
+    if (o.face && o.face.ex && o.face.ex !== 'neutral' && ex !== 'hurt' && ex !== 'ko') ex = o.face.ex;
+    drawHead(ctx, J, f, ex, t, s);
     const front = [];
     armParts(front, J, J.armF, f, false, p.h1, sw);
     group(ctx, front, c.ink);

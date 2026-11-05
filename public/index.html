@@ -6,7 +6,7 @@
 <title>Jan-Ken</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@500;600;700&family=Shippori+Mincho:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Shojumaru&family=Rajdhani:wght@500;600;700&family=Shippori+Mincho:wght@800&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#0b0809; --lacquer:#160f10; --panel:rgba(18,12,12,.82);
@@ -15,7 +15,7 @@
   --disp:'Bebas Neue',Impact,sans-serif; --ui:'Rajdhani',system-ui,sans-serif; --serif:'Shippori Mincho',serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--ink);color:var(--paper);font-family:var(--ui);overflow:hidden;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden;background:var(--ink);color:var(--paper);font-family:var(--ui);overflow:hidden;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;overflow:auto}
 .screen.on{display:flex}
@@ -198,6 +198,30 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
 .unlock span{font-weight:700;font-size:12px;letter-spacing:.2em;color:#d8c7ae}
 @keyframes ulIn{from{opacity:0;transform:scale(.7)}}
 
+/* always-visible confirm buttons */
+#select .selbar,#arenaSel .confirmbar{position:sticky;bottom:0;z-index:6;width:100%;max-width:100%;margin-top:18px;padding:22px 0 18px;display:flex;justify-content:center;
+  background:linear-gradient(180deg,rgba(8,5,5,0),rgba(8,5,5,.88) 45%,rgba(8,5,5,.96));pointer-events:none}
+#select .selbar .btn,#arenaSel .confirmbar .btn{pointer-events:auto;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 30px rgba(210,58,34,.35)}
+
+/* secret unlock announcement */
+.unlockfx{position:fixed;left:50%;top:3%;transform:translate(-50%,-30px) scale(.8);z-index:70;padding:16px 34px 14px;text-align:center;opacity:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(40,26,8,.96),rgba(14,9,5,.96));border:2px solid var(--gold2);box-shadow:0 0 60px rgba(247,220,138,.55),inset 0 0 30px rgba(247,220,138,.2);transition:opacity .3s,transform .4s cubic-bezier(.2,1.6,.4,1)}
+.unlockfx.on{opacity:1;transform:translate(-50%,0) scale(1)}
+.unlockfx i{display:block;font-style:normal;font-weight:700;font-size:12px;letter-spacing:.35em;color:var(--gold2)}
+.unlockfx b{display:block;font-family:var(--disp);font-size:46px;letter-spacing:.08em;color:#fff;text-shadow:0 0 20px rgba(247,220,138,.8)}
+.riddle{font-style:italic;color:var(--gold2)}
+
+/* camera controls */
+.campanel{position:absolute;left:22px;bottom:62px;z-index:7;width:250px;border:2px solid var(--gold);background:#000;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 24px rgba(227,181,74,.25);overflow:hidden}
+.campanel canvas{display:block;width:100%;aspect-ratio:4/3}
+.camlbl{position:absolute;left:0;right:0;bottom:0;padding:8px 6px 6px;text-align:center;font-family:var(--disp);font-size:21px;letter-spacing:.1em;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.camring{position:absolute;top:8px;right:8px;width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--cyan) calc(var(--p,0) * 1turn),rgba(255,255,255,.18) 0);-webkit-mask:radial-gradient(circle,transparent 54%,#000 56%);mask:radial-gradient(circle,transparent 54%,#000 56%)}
+.campanel.locked{border-color:var(--cyan);box-shadow:0 0 30px rgba(62,240,255,.6)}
+.camtoggle{position:absolute;left:18px;bottom:16px;z-index:7;pointer-events:auto}
+.camtoggle.on{color:var(--cyan)}
+.card.aim{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(62,240,255,.55),0 0 26px rgba(62,240,255,.35);transform:translateY(-6px)}
+@media (max-width:900px){.campanel{width:150px;bottom:54px;left:10px}.camlbl{font-size:15px}.camring{width:30px;height:30px}}
+
 /* modal + toast */
 .modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.78);display:none;place-items:center}
 .modal.on{display:grid}
@@ -219,6 +243,95 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
   .btn{min-width:260px;font-size:24px}
   .lockchip{top:96px;font-size:16px}
 }
+
+/* =================== INK & BRUSH THEME =================== */
+:root{--disp:'Shojumaru','Bebas Neue',serif;--ink:#141010;--rice:#f3e8d0;--rice2:#e3d2ae;--verm:#b8231a}
+.ink-out{text-shadow:2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),0 5px 0 var(--ink)}
+.logowrap{position:relative;padding:6px 30px 10px}
+.logowrap .swoosh,.vicwrap .swoosh{position:absolute;left:-4%;top:30%;width:108%;height:62%;opacity:.92;filter:drop-shadow(0 4px 0 rgba(0,0,0,.5))}
+.logo{position:relative;font-family:'Shojumaru',serif;font-size:clamp(60px,11vw,138px);line-height:1;letter-spacing:.02em;background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--rice);
+  filter:none;text-shadow:3px 3px 0 var(--ink),-3px 3px 0 var(--ink),3px -3px 0 var(--ink),-3px -3px 0 var(--ink),0 8px 0 var(--ink),0 12px 30px rgba(0,0,0,.6)}
+.seal{position:absolute;right:-10px;top:-4px;width:66px;height:66px;background:var(--verm);color:var(--rice);font-family:'Shojumaru';font-size:24px;display:grid;place-items:center;transform:rotate(-8deg);border-radius:7px;box-shadow:inset 0 0 0 3px var(--rice),inset 0 0 0 5px var(--verm),0 6px 16px rgba(0,0,0,.5)}
+.brush{display:none}
+.logo-sub{font-family:'Shojumaru';font-weight:400;letter-spacing:.3em;color:var(--rice);text-shadow:0 2px 0 var(--ink),0 0 12px rgba(0,0,0,.8)}
+h2.title{font-family:'Shojumaru';color:var(--rice);text-shadow:2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),0 6px 0 var(--ink);position:relative;padding-bottom:6px}
+h2.title::after{content:'';position:absolute;left:8%;right:8%;bottom:0;height:12px;background:var(--verm);border-radius:50%;transform:skewX(-20deg) rotate(-1deg);z-index:-1}
+.kicker{color:var(--rice);text-shadow:0 1px 6px #000}
+.purse{background:var(--rice);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);clip-path:none;color:var(--ink)}
+.purse b{font-family:'Shojumaru';color:var(--verm)}
+.purse span{color:var(--ink)}
+.coin{border-radius:5px;background:var(--verm);box-shadow:inset 0 0 0 2px var(--rice),inset 0 0 0 4px var(--verm)}
+.coin::after{border-color:var(--rice);border-radius:50%}
+.btn{font-family:'Shojumaru';font-size:22px;letter-spacing:.05em;color:var(--rice);background:var(--ink);border:0;
+  clip-path:polygon(2% 12%,10% 2%,40% 6%,72% 0,97% 8%,100% 46%,96% 90%,64% 100%,30% 94%,4% 100%,0 60%);box-shadow:none;padding:16px 36px 14px}
+.btn:hover{transform:translateY(-2px) rotate(-.6deg);box-shadow:none;filter:brightness(1.25)}
+.btn small{font-family:Rajdhani;color:#c9b99a}
+.btn.primary{background:var(--verm);border:0;text-shadow:none}
+.btn.primary small{color:#f3d6c6}
+.btn.gold{background:var(--rice);color:var(--ink);border:0;text-shadow:none}
+.btn.wa{background:#1f8f4c;color:#fff}
+.join input{font-family:'Shojumaru';background:var(--rice);color:var(--ink);border:3px solid var(--ink);border-right:0}
+.join input::placeholder{color:#a8977a}
+.join-label,.ghost,.net{color:var(--rice);text-shadow:0 1px 6px #000}
+.progress{color:var(--rice);text-shadow:0 1px 6px #000}.progress b{color:#ffcf8a}.progress em{color:#e6d6b4}
+/* cards on rice paper */
+.fcard,.acard{background:var(--rice);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);color:var(--ink)}
+.fcard:hover,.acard:hover{border-color:var(--ink);transform:translateY(-4px) rotate(-.4deg)}
+.fcard.sel,.acard.sel{border-color:var(--verm);box-shadow:6px 6px 0 var(--verm),0 0 30px rgba(184,35,26,.45)}
+.fcard canvas{border-bottom:3px solid var(--ink);background:radial-gradient(ellipse at 50% 70%,#4a2a24,#160c0b 70%)}
+.acard canvas{border-bottom:3px solid var(--ink)}
+.fcard .nm,.acard .nm{font-family:'Shojumaru';color:var(--ink);font-size:28px}
+.acard .nm{font-size:19px}
+.fcard .st{color:var(--verm)}
+.fcard .ds,.acard .ds{color:#4a3a2a}
+.stat{color:#5a4a3a}.stat .pips i{background:var(--rice2)}.stat .pips i.on{background:var(--verm)}
+.fcard .tag{background:var(--ink);color:var(--rice);border:0}
+.fcard .tag.lk{background:var(--verm);color:var(--rice)}
+.fcard.locked,.acard.locked{background:#cdbd99}
+.fcard.locked .nm,.acard.locked .nm{color:#6a5a44}
+.lockbar{background:var(--rice2);border:2px solid var(--ink)}.lockbar i{background:var(--verm)}.lockbar span{color:var(--ink)}
+.riddle{color:var(--verm)}
+.arena-hero{border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.arena-hero .cap{font-family:'Shojumaru';color:var(--rice);text-shadow:2px 2px 0 var(--ink),-2px 2px 0 var(--ink),0 5px 0 var(--ink)}
+.code{font-family:'Shojumaru';color:var(--rice);text-shadow:3px 3px 0 var(--ink),-3px 3px 0 var(--ink),0 8px 0 var(--verm)}
+.pulse{font-family:'Shojumaru';color:var(--rice);text-shadow:0 0 18px rgba(184,35,26,.9),0 3px 0 var(--ink)}
+.stakes{background:var(--rice);color:var(--ink);border:2px solid var(--ink)}
+.linkrow code{background:var(--rice);color:var(--ink);border:2px solid var(--ink)}
+/* HUD + banners */
+.pname{font-family:'Shojumaru';font-size:24px;color:var(--rice);text-shadow:2px 2px 0 var(--ink),-2px 2px 0 var(--ink)}
+.pname small{font-family:Rajdhani;color:#ffcf8a}
+.timer{font-family:'Shojumaru';color:var(--rice);text-shadow:3px 3px 0 var(--ink),-3px 3px 0 var(--ink),3px -3px 0 var(--ink),-3px -3px 0 var(--ink),0 6px 0 var(--verm);background:none}
+.timer.hot{color:#ffcf8a}
+.roundlbl{color:var(--rice);text-shadow:0 1px 4px #000}
+.banner{font-family:'Shojumaru'}
+.banner.std{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--rice);filter:none;text-shadow:4px 4px 0 var(--ink),-4px 4px 0 var(--ink),4px -4px 0 var(--ink),-4px -4px 0 var(--ink),0 10px 0 var(--verm)}
+.banner.ko{color:var(--verm);-webkit-text-stroke:0;text-shadow:4px 4px 0 var(--ink),-4px 4px 0 var(--ink),4px -4px 0 var(--ink),-4px -4px 0 var(--ink),0 10px 0 var(--ink),0 0 40px rgba(184,35,26,.8)}
+.banner.draw{color:var(--rice);text-shadow:4px 4px 0 var(--ink),-4px 4px 0 var(--ink),0 0 30px rgba(62,240,255,.8)}
+.banner .stripe{height:16px;background:var(--verm);opacity:.85;border-radius:50%;transform:translateY(-50%) skewX(-20deg)}
+.card{background:var(--rice);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.card:hover{border-color:var(--ink);box-shadow:5px 5px 0 var(--verm)}
+.card b{font-family:'Shojumaru';color:var(--ink);font-size:24px}
+.card span{color:#6a4a34}.card kbd{color:#9a8a70}
+.card svg path,.card svg g{stroke:var(--ink)}
+.card.picked{border-color:var(--verm);box-shadow:5px 5px 0 var(--verm),0 0 30px rgba(184,35,26,.5)}
+.lockchip{font-family:'Shojumaru';background:var(--rice);color:var(--ink);border:3px solid var(--ink)}
+.reveal b{font-family:'Shojumaru';text-shadow:2px 2px 0 var(--ink),-2px 2px 0 var(--ink)}
+.reveal .badge{background:var(--rice);border-color:var(--ink)}
+.reveal .badge svg g{stroke:var(--ink)}
+/* victory + panels */
+.vicwrap{position:relative;padding:0 20px}
+.vic{font-family:'Shojumaru';position:relative;background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--rice);filter:none;
+  text-shadow:4px 4px 0 var(--ink),-4px 4px 0 var(--ink),4px -4px 0 var(--ink),-4px -4px 0 var(--ink),0 10px 0 var(--ink)}
+.vicwho{font-family:'Shojumaru';font-size:26px;text-shadow:2px 2px 0 var(--ink),0 0 12px #000}
+.payout,.mbox,.toast,.unlock .ul,.unlockfx{background:var(--rice);color:var(--ink);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.payout .row{border-color:rgba(20,16,16,.15)}.payout .pos{color:#1f7a3c}.payout .neg{color:var(--verm)}
+.payout .big{font-family:'Shojumaru'}
+.mbox h3,.unlock b,.unlockfx b{font-family:'Shojumaru';color:var(--ink);text-shadow:none}
+.mbox p{color:#4a3a2a}
+.unlock i,.unlockfx i{color:var(--verm)}
+.unlock span{color:#5a4a3a}
+.campanel{border-color:var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.camlbl{font-family:'Shojumaru';font-size:18px}
 </style>
 </head>
 <body>
@@ -228,8 +341,7 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
   <canvas class="bg" id="lobbyBg"></canvas><div class="veil"></div>
   <div class="net" id="netState"><i></i><span>OFFLINE</span></div>
   <div class="content" style="min-height:100%;justify-content:center">
-    <div class="logo">JAN-KEN</div>
-    <div class="brush"></div>
+    <div class="logowrap"><svg class="swoosh" viewBox="0 0 400 80" preserveAspectRatio="none"><path d="M6 46 C60 20 140 18 220 26 C290 32 350 30 396 18 C380 40 330 58 250 60 C170 62 90 70 14 72 C4 64 2 54 6 46Z" fill="#b8231a"/></svg><div class="logo">JAN-KEN</div><div class="seal">JK</div></div>
     <div class="logo-sub">The Hidden Hand Tournament</div>
     <div class="purse"><div class="coin"></div><span>YOUR PURSE:</span><b id="lobbyPurse">400 COINS</b></div>
     <div class="progress" id="lobbyProg"></div>
@@ -237,7 +349,7 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
       <button class="btn" id="bPractice">PRACTICE VS CPU<small>Offline training · no stakes</small></button>
       <button class="btn primary" id="bCreate">CREATE DUEL<small>100-coin entry · winner takes 200</small></button>
       <div class="join-label">ENTER ROOM CODE</div>
-      <form class="join" id="joinForm"><input id="roomInput" maxlength="7" placeholder="JK-0000" autocomplete="off" spellcheck="false"><button class="btn gold" type="submit">JOIN</button></form>
+      <form class="join" id="joinForm"><input id="roomInput" maxlength="10" placeholder="JK-0000" autocomplete="off" spellcheck="false"><button class="btn gold" type="submit">JOIN</button></form>
       <button class="ghost refill" id="bRefill" hidden>Purse too light · Refill to 400</button>
     </div>
   </div>
@@ -260,12 +372,13 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
 
 <!-- 3. Arena select -->
 <section class="screen" id="arenaSel">
+  <canvas class="bg" id="arenaBg"></canvas><div class="veil"></div>
   <div class="content">
     <div class="kicker">STEP 2 OF 2 · HOST CHOOSES THE BATTLEGROUND</div>
     <h2 class="title">SELECT ARENA</h2>
     <div class="arena-hero"><canvas id="arenaHero"></canvas><div class="cap" id="arenaCap"></div></div>
     <div class="grid5" id="arenaGrid"></div>
-    <button class="btn primary" id="bConfirmArena" style="margin-top:22px">CONFIRM ARENA</button>
+    <div class="confirmbar"><button class="btn primary" id="bConfirmArena">CONFIRM ARENA</button></div>
     <button class="ghost" id="arenaBack" style="margin-top:10px">← Back to fighters</button>
   </div>
 </section>
@@ -314,6 +427,9 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
     <button class="card" data-c="paper"><svg viewBox="0 0 64 64"></svg><b>PAPER</b><span>OPEN PALM STRIKE</span><kbd>2</kbd></button>
     <button class="card" data-c="scissors"><svg viewBox="0 0 64 64"></svg><b>SCISSORS</b><span>TWO-FINGER SPEAR</span><kbd>3</kbd></button>
   </div>
+  <div class="campanel" id="camPanel" hidden><canvas id="camView" width="320" height="240"></canvas><div class="camring" id="camRing"></div><div class="camlbl" id="camLbl">SHOW YOUR HAND</div></div>
+  <button class="ghost camtoggle" id="camToggle">Camera controls: off</button>
+  <video id="camVideo" playsinline muted style="position:absolute;width:2px;height:2px;opacity:0;pointer-events:none;left:0;top:0"></video>
   <button class="ghost quit" id="quitBtn">Leave match</button>
 </section>
 
@@ -323,7 +439,7 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
   <div class="veil" style="background:linear-gradient(90deg,rgba(8,5,5,.1) 25%,rgba(8,5,5,.9) 60%)"></div>
   <div class="content" style="min-height:100%;justify-content:center;align-items:flex-end;max-width:none;padding-right:6vw">
     <div style="display:flex;flex-direction:column;align-items:center">
-      <div class="vic">VICTORY!</div>
+      <div class="vicwrap"><svg class="swoosh" viewBox="0 0 400 80" preserveAspectRatio="none"><path d="M6 46 C60 20 140 18 220 26 C290 32 350 30 396 18 C380 40 330 58 250 60 C170 62 90 70 14 72 C4 64 2 54 6 46Z" fill="#b8231a"/></svg><div class="vic">VICTORY!</div></div>
       <div class="vicwho" id="vicWho"></div>
       <div class="payout" id="payout"></div>
       <div class="unlock" id="unlockBox" hidden></div>
@@ -335,9 +451,12 @@ h2.title{font-family:var(--disp);font-size:clamp(40px,6vw,64px);letter-spacing:.
 
 <div class="modal" id="msgModal"><div class="mbox"><h3 id="msgTitle"></h3><p id="msgBody"></p><button class="btn gold" id="msgOk" style="min-width:160px">OK</button></div></div>
 <div class="toast" id="toast"></div>
+<div class="unlockfx" id="unlockFx"></div>
 
 <script src="referee.js"></script>
 <script src="fighters.js"></script>
+<script src="hands.js"></script>
+<script src="camera.js"></script>
 <script src="art.js"></script>
 <script src="game.js"></script>
 </body>

@@ -25,10 +25,25 @@
     set(v) { store.set('jk.purse', v); refreshLobby(); },
   };
   const Progress = {
-    get() { return Object.assign({ duels: 0, rounds: 0 }, store.get('jk.progress', {})); },
-    add(k) { const p = this.get(); p[k]++; store.set('jk.progress', p); },
-    fighterOpen(f) { return !f.unlock || this.get().duels >= f.unlock; },
-    arenaOpen(a) { return !a.unlock || this.get().rounds >= a.unlock; },
+    get() { const p = Object.assign({ duels: 0, rounds: 0, wins: 0, streak: 0, lastDay: null, secrets: {} }, store.get('jk.progress', {})); p.secrets = p.secrets || {}; return p; },
+    save(p) { store.set('jk.progress', p); },
+    add(k) { const p = this.get(); p[k] = (p[k] || 0) + 1; this.save(p); },
+    reqOpen(r) { const p = this.get(); if (r.type === 'wins') return p.wins >= r.n; if (r.type === 'streak') return p.streak >= r.n; if (r.type === 'secret') return !!p.secrets[r.key]; return false; },
+    fighterOpen(f) { return f.req ? this.reqOpen(f.req) : !f.unlock || this.get().duels >= f.unlock; },
+    arenaOpen(a) { return a.req ? this.reqOpen(a.req) : !a.unlock || this.get().rounds >= a.unlock; },
+    touchDay() {
+      const p = this.get(), d = new Date(), key = (x) => `${x.getFullYear()}-${x.getMonth() + 1}-${x.getDate()}`;
+      const today = key(d), y = new Date(d); y.setDate(d.getDate() - 1);
+      if (p.lastDay === today) return;
+      p.streak = p.lastDay === key(y) ? p.streak + 1 : 1; p.lastDay = today; this.save(p);
+    },
+    secret(k) {
+      const p = this.get(); if (p.secrets[k]) return false;
+      p.secrets[k] = Date.now(); this.save(p);
+      const items = JK.FIGHTERS.filter((f) => f.req && f.req.key === k).map((f) => ['NEW FIGHTER', f.name]).concat(JK.ARENAS.filter((a) => a.req && a.req.key === k).map((a) => ['NEW ARENA', a.name]));
+      items.forEach(([kind, name], i) => setTimeout(() => announce(kind, name), i * 2600));
+      return true;
+    },
     openSets() { return { f: JK.FIGHTERS.filter((f) => this.fighterOpen(f)).map((f) => f.id), a: JK.ARENAS.filter((a) => this.arenaOpen(a)).map((a) => a.id) }; },
   };
   function refreshLobby() {
@@ -36,7 +51,7 @@
     $('#lobbyPurse').textContent = p + ' COINS';
     $('#bRefill').hidden = p >= ENTRY;
     $('#bCreate').disabled = p < ENTRY;
-    const nextF = JK.FIGHTERS.find((f) => !Progress.fighterOpen(f)), nextA = JK.ARENAS.find((a) => !Progress.arenaOpen(a));
+    const nextF = JK.FIGHTERS.find((f) => !f.req && !Progress.fighterOpen(f)), nextA = JK.ARENAS.find((a) => !a.req && !Progress.arenaOpen(a));
     $('#lobbyProg').innerHTML = `<span>FIGHTERS <b>${o.f.length}/${JK.FIGHTERS.length}</b></span><span>ARENAS <b>${o.a.length}/${JK.ARENAS.length}</b></span>` +
       (nextF ? `<em>Next fighter: win ${nextF.unlock - pr.duels} more online duel${nextF.unlock - pr.duels > 1 ? 's' : ''}</em>` : '') +
       (nextA ? `<em>Next arena: win ${nextA.unlock - pr.rounds} more round${nextA.unlock - pr.rounds > 1 ? 's' : ''}</em>` : '');
@@ -102,6 +117,16 @@
     if (fn) fn(GC);
     requestAnimationFrame(frame);
   }
+  function announce(kind, name) {
+    const el = $('#unlockFx'); if (!el) return;
+    el.innerHTML = `<i>SECRET UNLOCKED · ${kind}</i><b>${name}</b>`;
+    el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+    SFX.unlock();
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 4200);
+    if (current === 'select') buildFighterGrid();
+    if (current === 'arenaSel') buildArenaGrid();
+    if (current === 'lobby') refreshLobby();
+  }
   function toast(msg, ms = 2600) {
     const el = $('#toast'); el.textContent = msg; el.classList.add('on');
     clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), ms);
@@ -139,6 +164,7 @@
       case 'checked': if (m.ok) { S.room = m.code; S.flow = 'join'; openSelect(); } else toast(m.reason || 'Room not found.'); break;
       case 'start': { const my = m.you, op = my === 'a' ? 'b' : 'a'; startMatch({ mode: 'online', mySide: my, arena: m.arena, me: m[my], opp: m[op] }); break; }
       case 'ev': if (M && M.mode === 'online') onEvent(m.ev, m.data); break;
+      case 'face': if (M && M.mode === 'online') M.oppFace = { ex: m.ex, tilt: m.tilt }; break;
       case 'rematchReq': if (current === 'victory') $('#vicNote').textContent = 'YOUR RIVAL WANTS A REMATCH!'; break;
       case 'opponentLeft':
         if (current === 'victory') { $('#vicNote').textContent = 'YOUR RIVAL HAS LEFT THE ROOM.'; $('#bRematch').disabled = true; }
@@ -194,12 +220,14 @@
   $('#bRefill').onclick = () => { Wallet.set(START_PURSE); SFX.coin(); toast('Purse refilled to 400 coins.'); };
   $('#roomInput').addEventListener('input', (e) => {
     let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    v = v.startsWith('JK') ? 'JK-' + v.slice(2, 6) : v.slice(0, 6);
+    v = v.startsWith('JK') ? 'JK-' + v.slice(2, 6) : v.slice(0, 10);
     e.target.value = v;
   });
   $('#joinForm').onsubmit = (e) => {
     e.preventDefault(); SFX.click();
-    const m = $('#roomInput').value.toUpperCase().replace(/[^A-Z0-9]/g, '').match(/^JK(\d{4})$/);
+    const raw = $('#roomInput').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (raw === 'KAMIKAZE') { $('#roomInput').value = ''; if (!Progress.secret('kamikaze')) toast('The divine wind already answered you.'); return; }
+    const m = raw.match(/^JK(\d{4})$/);
     if (!m) return toast('Enter a room code like JK-8821.');
     if (Wallet.get() < ENTRY) return toast('You need 100 coins to accept a duel.');
     if (needServer()) return;
@@ -213,6 +241,17 @@
     buildFighterGrid();
     show('select');
   }
+  function lockInfo(item, isArena) {
+    const r = item.req, pr = Progress.get();
+    if (!r) {
+      if (isArena) return { name: item.name, text: `Win <b>${item.unlock}</b> rounds to unlock`, bar: [Math.min(pr.rounds, item.unlock), item.unlock, 'ROUND WINS'], tip: `${item.name} unlocks after ${item.unlock} round wins.` };
+      return { name: item.name, text: `Win <b>${item.unlock}</b> online duel${item.unlock > 1 ? 's' : ''} against a real player to unlock.`, bar: [Math.min(pr.duels, item.unlock), item.unlock, 'DUEL WINS'], tip: `${item.name} unlocks after ${item.unlock} online duel win${item.unlock > 1 ? 's' : ''}.` };
+    }
+    if (r.type === 'wins') return { name: item.name, text: r.label + '.', bar: [Math.min(pr.wins, r.n), r.n, 'MATCH WINS'], tip: r.label + '.' };
+    if (r.type === 'streak') return { name: item.name, text: r.label + '.', bar: [Math.min(pr.streak, r.n), r.n, 'DAYS IN A ROW'], tip: r.label + '.' };
+    if (r.hint) return { name: '???', secret: true, text: `<span class="riddle">“${r.hint}”</span>`, tip: 'A secret. Read the riddle.' };
+    return { name: item.name, text: r.label + '.', tip: r.label + '.' };
+  }
   function buildFighterGrid() {
     const g = $('#fighterGrid'); g.innerHTML = '';
     const pr = Progress.get();
@@ -225,12 +264,12 @@
         b.innerHTML = `<div class="tag">${f.stance.toUpperCase()}</div><canvas></canvas><div class="nm">${f.name}</div><div class="st">${f.style}</div><div class="ds">${f.desc}</div>
           <div class="stats"><div class="stat">SPEED<div class="pips">${pip(f.stats.speed)}</div></div><div class="stat">POISE<div class="pips">${pip(f.stats.poise)}</div></div><div class="stat">WEIGHT<div class="pips">${pip(f.stats.weight)}</div></div></div>`;
       } else {
-        b.innerHTML = `<div class="tag lk">LOCKED</div><canvas></canvas><div class="nm">${f.name}</div><div class="st">${f.style}</div>
-          <div class="ds">Win <b>${f.unlock}</b> online duel${f.unlock > 1 ? 's' : ''} against a real player to unlock.</div>
-          <div class="lockbar"><i style="width:${Math.min(100, (pr.duels / f.unlock) * 100)}%"></i><span>${Math.min(pr.duels, f.unlock)} / ${f.unlock} DUEL WINS</span></div>`;
+        const li = lockInfo(f, false);
+        b.innerHTML = `<div class="tag lk">${li.secret ? 'SECRET' : 'LOCKED'}</div><canvas></canvas><div class="nm">${li.name}</div><div class="st">${li.secret ? '? ? ?' : f.style}</div>
+          <div class="ds">${li.text}</div>` + (li.bar ? `<div class="lockbar"><i style="width:${Math.min(100, (li.bar[0] / li.bar[1]) * 100)}%"></i><span>${li.bar[0]} / ${li.bar[1]} ${li.bar[2]}</span></div>` : '');
       }
       b.onclick = () => {
-        if (!open) { toast(`${f.name} unlocks after ${f.unlock} online duel win${f.unlock > 1 ? 's' : ''}.`); return; }
+        if (!open) { toast(lockInfo(f, false).tip); return; }
         SFX.click(); S.fighter = f.id; $$('.fcard').forEach((x) => x.classList.toggle('sel', x === b));
       };
       g.appendChild(b);
@@ -272,9 +311,10 @@
     JK.ARENAS.forEach((a) => {
       const open = Progress.arenaOpen(a);
       const b = document.createElement('button'); b.className = 'acard' + (a.id === S.arena ? ' sel' : '') + (open ? '' : ' locked'); b.dataset.id = a.id;
-      b.innerHTML = `<canvas></canvas><div class="nm">${a.name}</div><div class="ds">${open ? a.desc : `Win <b>${a.unlock}</b> rounds to unlock · ${Math.min(pr.rounds, a.unlock)}/${a.unlock}`}</div>`;
+      const li = open ? null : lockInfo(a, true);
+      b.innerHTML = `<canvas></canvas><div class="nm">${open ? a.name : li.name}</div><div class="ds">${open ? a.desc : li.text + (li.bar ? ` · ${li.bar[0]}/${li.bar[1]}` : '')}</div>`;
       b.onclick = () => {
-        if (!open) { toast(`${a.name} unlocks after ${a.unlock} round wins.`); return; }
+        if (!open) { toast(li.tip); return; }
         SFX.click(); S.arena = a.id; $$('.acard').forEach((x) => x.classList.toggle('sel', x === b));
       };
       g.appendChild(b);
@@ -292,6 +332,10 @@
     const w = hero.width, h = hero.height, W = Math.max(w, h * 1.78), H = W / 1.78;
     c.save(); c.translate(0, -(H - h) * 0.62); JK.drawArena(c, S.arena, W, H, t / 1000, arenaFx[S.arena]); c.restore();
     JK.drawFighter(c, S.fighter, JK.POSES[JK.FIGHTER[S.fighter].idle], { x: w * 0.8, y: h * 0.98, s: h * 0.0042, facing: -1, t: t / 1000, rim: rimOf(S.arena) });
+    const bg = $('#arenaBg'); fit(bg); const bc = bg.getContext('2d');
+    arenaFx['bg' + S.arena] = arenaFx['bg' + S.arena] || JK.makeArenaFx(S.arena);
+    JK.drawArena(bc, S.arena, bg.width, bg.height, t / 1000, arenaFx['bg' + S.arena]);
+    JK.drawFighter(bc, S.fighter, JK.POSES[JK.FIGHTER[S.fighter].idle], { x: bg.width * 0.12, y: bg.height * 0.97, s: bg.height * 0.0028, facing: 1, t: t / 1000 });
     $('#arenaCap').textContent = JK.ARENA[S.arena].name;
   };
   $('#arenaBack').onclick = () => { SFX.click(); show('select'); };
@@ -338,8 +382,8 @@
     cur() { return JK.lerpPose(this.from, this.to, this.ease(clamp((now() - this.t0) / this.dur))); }
     x() { return this.xf + (this.xt - this.xf) * this.xease(clamp((now() - this.x0) / this.xdur)); }
     snap(x) { this.xf = this.xt = x; const p = JK.POSES[this.f.idle]; this.from = this.to = p; this.trail = []; this.sway = [0, 0]; }
-    draw(c, w, y, s, t, rim) {
-      const out = JK.drawFighter(c, this.fid, this.cur(), { x: this.x() * w, y, s, facing: this.facing, t, sway: this.sway, rim });
+    draw(c, w, y, s, t, rim, face) {
+      const out = JK.drawFighter(c, this.fid, this.cur(), { x: this.x() * w, y, s, facing: this.facing, t, sway: this.sway, rim, face });
       // secondary motion: hair / cloth lag behind head velocity
       if (this.prev) {
         const vx = (out.head[0] - this.prev[0]) / s, vy = (out.head[1] - this.prev[1]) / s;
@@ -356,12 +400,15 @@
 
   /* ---------------------------------------------------------------- combat: lifecycle */
   function startMatch(cfg) {
+    Progress.touchDay();
+    if (new Date().getHours() === 0) setTimeout(() => Progress.secret('midnight'), 1500);
+    if (cfg.mode === 'online' && cfg.mySide === 'a') setTimeout(() => Progress.secret('invite'), 1500);
     if (M) cleanupMatch();
     const purseBefore = Wallet.get(), staked = cfg.mode === 'online';
     if (staked) Wallet.set(purseBefore - ENTRY);
     M = {
       mode: cfg.mode, mySide: cfg.mySide, oppSide: cfg.mySide === 'a' ? 'b' : 'a', arena: cfg.arena,
-      me: cfg.me, opp: cfg.opp, staked, purseBefore, oppPurse: cfg.opp.purse, openBefore: Progress.openSets(),
+      me: cfg.me, opp: cfg.opp, staked, purseBefore, oppPurse: cfg.opp.purse, openBefore: Progress.openSets(), roundPicks: [], lostClash: false, oppFace: null, moonTaps: [],
       actors: { me: new Actor(cfg.me.fighter, 1, 0.3), opp: new Actor(cfg.opp.fighter, -1, 0.7) },
       fx: JK.makeArenaFx(cfg.arena), rim: rimOf(cfg.arena), effects: [], bursts: [], shake: 0, hitstop: 0, slowmo: 0,
       cam: { z: 1, x: 0.5, y: 0.55, tz: 1, tx: 0.5, ty: 0.55 },
@@ -374,9 +421,11 @@
     $('#choices').classList.add('off'); $('#timer').textContent = '05';
     $('#quitBtn').textContent = 'Leave match'; $('#quitBtn').dataset.armed = '';
     show('fight');
+    camUI();
+    if (store.get('jk.camera', false) && Cam && !Cam.on) camStart(true);
     if (cfg.mode === 'cpu') { M.ref = new window.Referee((ev, d) => onEvent(ev, d)); setTimeout(() => M && M.ref && M.ref.start(), 300); }
   }
-  function cleanupMatch() { if (!M) return; if (M.ref) M.ref.stop(); clearTimeout(M.cpuTimer); M.token.dead = true; M = null; }
+  function cleanupMatch() { if (Cam && Cam.on) Cam.stop(); if (!M) return; if (M.ref) M.ref.stop(); clearTimeout(M.cpuTimer); M.token.dead = true; M = null; }
   function endToLobby() { cleanupMatch(); show('lobby'); }
   const who = (side) => (side === M.mySide ? 'me' : 'opp');
   const sideObj = (o) => ({ me: o[M.mySide], opp: o[M.oppSide] });
@@ -437,6 +486,7 @@
     if (!M) return;
     const tok = M.token, A = M.actors;
     if (ev === 'round') {
+      M.roundPicks = [];
       $('#roundLbl').textContent = d.round === 3 ? 'FINAL ROUND' : 'ROUND ' + d.round;
       setJewels(d.roundWins); setDots({ a: 0, b: 0 }); setHP('me', 100, true); setHP('opp', 100, true);
       A.me.snap(0.3); A.opp.snap(0.7);
@@ -456,6 +506,10 @@
     }
     if (ev === 'locked') $(who(d.side) === 'me' ? '#lockL' : '#lockR').classList.add('show');
     if (ev === 'reveal') {
+      M.lastReveal = d;
+      M.roundPicks.push(d[M.mySide] || '-');
+      if (M.roundPicks.slice(-3).join() === 'rock,paper,scissors') Progress.secret('combo');
+      if (d.winner === M.oppSide) M.lostClash = true;
       M.timerOn = false; $('#timer').textContent = '00'; $('#timer').classList.remove('hot');
       $('#choices').classList.add('off'); $('#lockL').classList.remove('show'); $('#lockR').classList.remove('show');
       playClash(d, tok);
@@ -463,11 +517,17 @@
     if (ev === 'roundEnd') {
       const w = who(d.winner), l = w === 'me' ? 'opp' : 'me';
       if (w === 'me') Progress.add('rounds');
-      banner('K.O.', 'ko'); SFX.hit(); SFX.gong();
-      const lo = A[l].out;
-      impact(lo ? lo.chest[0] / $('#stage').width : 0.5, lo ? lo.chest[1] / $('#stage').height : 0.55, 'ko', 1.18);
-      A[l].pose('kneel', 700); A[w].pose('victory', 600, easeBack);
-      setJewels(d.roundWins);
+      const R = M.lastReveal, wc = R && R[d.winner], lc = R && R[d.winner === 'a' ? 'b' : 'a'];
+      const ko = () => {
+        if (tok.dead) return;
+        banner('K.O.', 'ko'); SFX.hit(); SFX.gong();
+        const lo = A[l].out;
+        impact(lo ? lo.chest[0] / $('#stage').width : 0.5, lo ? lo.chest[1] / $('#stage').height : 0.55, 'ko', 1.18);
+        A[l].pose('kneel', 700); A[w].pose('victory', 600, easeBack);
+        setJewels(d.roundWins);
+      };
+      if (wc && lc) { M.finisher = { t0: rnow(), dur: 1900, win: wc, lose: lc, winFid: A[w].fid, loseFid: A[l].fid, hit: false }; SFX.whoosh(); setTimeout(ko, 1850); }
+      else ko();
     }
     if (ev === 'matchEnd') {
       M.over = true;
@@ -477,6 +537,8 @@
       let after = Wallet.get();
       if (M.staked && won) { after += POOL; Wallet.set(after); }
       if (M.mode === 'online' && won) Progress.add('duels');
+      if (won) Progress.add('wins');
+      if (won && !M.lostClash && !d.forfeit) Progress.secret('flawless');
       const openAfter = Progress.openSets();
       const result = {
         won, forfeit: !!d.forfeit, before: M.purseBefore, after, staked: M.staked, oppPurse: M.oppPurse, mode: M.mode,
@@ -576,10 +638,11 @@
     c.save();
     if (M.shake > 0.3) { c.translate((Math.random() - 0.5) * M.shake, (Math.random() - 0.5) * M.shake); M.shake *= 0.85; }
     c.translate(w / 2, h * 0.55); c.scale(cam.z, cam.z); c.translate(-fx, -fy);
+    M.view = { w, h, z: cam.z, fx, fy };
     JK.drawArena(c, M.arena, w, h, t / 1000, M.fx);
     const s = h * 0.0031, y = h * 0.93, A = M.actors;
-    A.opp.draw(c, w, y, s, t / 1000 + 1.7, M.rim);
-    A.me.draw(c, w, y, s, t / 1000, M.rim);
+    A.opp.draw(c, w, y, s, t / 1000 + 1.7, M.rim, M.oppFace);
+    A.me.draw(c, w, y, s, t / 1000, M.rim, Cam && Cam.on ? Cam.face : null);
     drawTrail(c, A.me, h); drawTrail(c, A.opp, h);
     M.effects = M.effects.filter((e) => now() - e.t0 < 600);
     M.effects.forEach((e) => {
@@ -600,6 +663,8 @@
     const vg = c.createRadialGradient(w / 2, h * 0.55, h * 0.3, w / 2, h * 0.55, w * 0.75);
     vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)');
     c.fillStyle = vg; c.fillRect(0, 0, w, h);
+    drawFinisher(c, w, h);
+    camTick();
     if (M.timerOn) {
       const sec = Math.ceil(Math.max(0, M.deadline - rnow()) / 1000);
       $('#timer').textContent = String(Math.min(5, sec)).padStart(2, '0');
@@ -617,6 +682,139 @@
     if (M && M.mode === 'online') Net.send({ t: 'leave' });
     endToLobby();
   };
+
+
+  /* ---------------------------------------------------------------- round-winning hand finisher */
+  const FIN_TEXT = { paper: 'PAPER WRAPS ROCK', rock: 'ROCK SMASHES SCISSORS', scissors: 'SCISSORS CUT PAPER' };
+  const FIN_WORD = { paper: 'WRAP!', rock: 'SMASH!', scissors: 'SNIP!' };
+  const hexRgb = (hx) => { const n = parseInt((hx || '#c8321f').slice(1), 16); return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`; };
+  function drawFinisher(c, w, h) {
+    const F = M.finisher; if (!F) return;
+    const e = rnow() - F.t0;
+    if (e > F.dur) { M.finisher = null; return; }
+    const IMP = 700, inK = easeOut(clamp(e / 220)), outK = clamp((e - (F.dur - 260)) / 260);
+    const pre = clamp(e / IMP), post = clamp((e - IMP) / 650), hitNow = e > IMP && e < IMP + 260;
+    if (e > IMP && !F.hit) { F.hit = true; SFX.hit(); }
+    const wf = JK.FIGHTER[F.winFid], col = hexRgb(wf.c.accent && wf.c.accent !== '#f4efe6' ? wf.c.accent : wf.c.top);
+    c.save(); c.globalAlpha = inK * (1 - outK);
+    const bg = c.createRadialGradient(w / 2, h * 0.5, h * 0.05, w / 2, h * 0.5, w * 0.7);
+    bg.addColorStop(0, `rgba(${col},.98)`); bg.addColorStop(0.55, `rgba(${col},.9)`); bg.addColorStop(1, 'rgba(6,4,10,.98)');
+    c.fillStyle = bg; c.fillRect(0, 0, w, h);
+    let sd = 17; const rnd = () => ((sd = (sd * 9301 + 49297) % 233280) / 233280);
+    for (let i = 0; i < 80; i++) {
+      const a = rnd() * Math.PI * 2, wd = 0.004 + rnd() * 0.01, r0 = h * (0.22 + rnd() * 0.12) * (1 + post * 0.3), R = w;
+      c.fillStyle = i % 3 ? 'rgba(0,0,0,.4)' : 'rgba(255,255,255,.4)';
+      c.beginPath(); c.moveTo(w / 2 + Math.cos(a) * r0, h * 0.5 + Math.sin(a) * r0); c.lineTo(w / 2 + Math.cos(a - wd) * R, h * 0.5 + Math.sin(a - wd) * R); c.lineTo(w / 2 + Math.cos(a + wd) * R, h * 0.5 + Math.sin(a + wd) * R); c.fill();
+    }
+    const zoom = 1.28 - 0.28 * easeOut(clamp(e / 500)) + (hitNow ? 0.05 * (1 - (e - IMP) / 260) : 0);
+    const sh = hitNow ? (Math.random() - 0.5) * h * 0.02 : 0;
+    c.translate(w / 2 + sh, h * 0.55 + sh); c.scale(zoom, zoom); c.translate(-w / 2, -h * 0.55);
+    const hs = h * 0.0034, glow = post > 0 ? '255,232,150' : null, dim = post * 0.35;
+    let cx = w / 2, cy = h * 0.5;
+    if (F.win === 'paper') {
+      const rockY = h * 1.02 - 40 * hs, topY = rockY - 128 * hs;
+      JK.drawHand(c, F.loseFid, 'rock', { x: w / 2, y: rockY + post * h * 0.02, s: hs, dim, t: e / 1000 });
+      const py = -h * 0.35 + (topY - 30 * hs + h * 0.35) * easeOut(pre);
+      JK.drawHand(c, F.winFid, 'paper', { x: w / 2, y: py, s: hs, rot: Math.PI, sy: 1 - 0.42 * easeOut(post), glow, t: e / 1000 });
+      cx = w / 2; cy = topY;
+    } else if (F.win === 'rock') {
+      const sy = 1 - 0.32 * Math.sin(Math.PI * clamp(post * 1.4)), base = h * 1.02;
+      JK.drawHand(c, F.loseFid, 'scissors', { x: w / 2, y: base + post * h * 0.05, s: hs, rot: Math.sin(post * 9) * 0.06 * (1 - post), sy: post > 0 ? sy : 1, dim, t: e / 1000 });
+      const tip = base - 186 * hs, contact = tip - 118 * hs;
+      const ry = -h * 0.4 + (contact + h * 0.4) * (pre * pre) + (post > 0 ? Math.sin(Math.PI * clamp(post * 2)) * -h * 0.03 : 0);
+      JK.drawHand(c, F.winFid, 'rock', { x: w / 2, y: ry, s: hs, rot: Math.PI, glow, t: e / 1000 });
+      cx = w / 2; cy = tip;
+    } else {
+      const px = w * 0.42, py = h * 1.04;
+      JK.drawHand(c, F.loseFid, 'paper', { x: px, y: py + post * h * 0.04, s: hs, rot: 0.18 + post * 0.18, dim, t: e / 1000 });
+      const edgeX = px + 48 * hs, ey = py - 118 * hs, sx0 = w * 1.35, sx1 = edgeX + 176 * hs;
+      JK.drawHand(c, F.winFid, 'scissors', { x: sx0 + (sx1 - sx0) * easeOut(pre) - (post > 0 ? Math.sin(Math.PI * clamp(post * 2)) * w * 0.02 : 0), y: ey, s: hs, rot: -Math.PI / 2, glow, t: e / 1000 });
+      cx = edgeX; cy = ey;
+      if (post > 0) {
+        const L2 = clamp(post * 3) * h * 0.5;
+        c.save(); c.strokeStyle = 'rgba(255,255,255,.95)'; c.lineWidth = h * 0.012 * (1 - post); c.lineCap = 'round'; c.shadowColor = '#fff'; c.shadowBlur = h * 0.03;
+        c.beginPath(); c.moveTo(cx - L2 * 0.5, cy - L2 * 0.35); c.lineTo(cx + L2 * 0.5, cy + L2 * 0.35); c.stroke(); c.restore();
+      }
+    }
+    if (post > 0 && post < 0.6) {
+      const k = post / 0.6, r = h * (0.05 + k * 0.35);
+      c.strokeStyle = `rgba(255,240,190,${1 - k})`; c.lineWidth = h * 0.02 * (1 - k); c.beginPath(); c.arc(cx, cy, r, 0, 7); c.stroke();
+    }
+    c.restore();
+    c.save(); c.globalAlpha = inK * (1 - outK);
+    if (hitNow) { c.fillStyle = `rgba(255,255,255,${0.55 * (1 - (e - IMP) / 260)})`; c.fillRect(0, 0, w, h); }
+    if (post > 0) {
+      const pop = easeBack(clamp(post * 4)), size = h * 0.17;
+      c.save(); c.translate(w * 0.72, h * 0.3); c.rotate(-0.16); c.scale(pop, pop); c.transform(1, 0, -0.2, 1, 0, 0);
+      c.font = `${Math.round(size)}px Shojumaru, Impact, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
+      c.lineWidth = size * 0.22; c.strokeStyle = '#140a0a'; c.strokeText(FIN_WORD[F.win], 0, 0);
+      c.lineWidth = size * 0.1; c.strokeStyle = `rgb(${col})`; c.strokeText(FIN_WORD[F.win], 0, 0);
+      c.fillStyle = '#fff6dc'; c.fillText(FIN_WORD[F.win], 0, 0); c.restore();
+      c.font = `${Math.round(h * 0.06)}px Shojumaru, Impact, sans-serif`; c.textAlign = 'center';
+      c.lineWidth = h * 0.012; c.strokeStyle = 'rgba(10,6,12,.92)'; c.strokeText(FIN_TEXT[F.win], w / 2, h * 0.93);
+      c.fillStyle = '#f3e8d0'; c.fillText(FIN_TEXT[F.win], w / 2, h * 0.93);
+    }
+    c.restore();
+  }
+
+  /* ---------------------------------------------------------------- moon easter egg */
+  $('#stage').addEventListener('pointerdown', (e) => {
+    if (!M || M.arena !== 'pagoda' || !M.view) return;
+    const cv = $('#stage'), r = cv.getBoundingClientRect(), V = M.view;
+    const sx = ((e.clientX - r.left) / r.width) * V.w, sy = ((e.clientY - r.top) / r.height) * V.h;
+    const wx = (sx - V.w / 2) / V.z + V.fx, wy = (sy - V.h * 0.55) / V.z + V.fy;
+    if (Math.hypot(wx - V.w * 0.74, wy - V.h * 0.2) > V.h * 0.11) return;
+    const nowr = performance.now(); M.moonTaps = M.moonTaps.filter((q) => nowr - q < 4000); M.moonTaps.push(nowr);
+    SFX.tick();
+    if (M.moonTaps.length >= 3) Progress.secret('moon');
+  });
+
+  /* ---------------------------------------------------------------- camera controls */
+  const Cam = JK.Cam;
+  function camUI() {
+    const on = Cam && Cam.on;
+    $('#camPanel').hidden = !on;
+    $('#camToggle').classList.toggle('on', !!on);
+    $('#camToggle').textContent = on ? 'Camera controls: on' : 'Camera controls: off';
+  }
+  async function camStart(quiet) {
+    if (!Cam) return;
+    $('#camPanel').hidden = false;
+    try {
+      await Cam.start((msg) => ($('#camLbl').textContent = msg));
+      store.set('jk.camera', true);
+      if (!quiet) toast('Camera on: hold a fist, open palm or V sign for 1 second to lock your move.', 4500);
+    } catch (e) {
+      store.set('jk.camera', false);
+      if (!quiet) message('CAMERA UNAVAILABLE', e.message + ' You can still pick with the buttons.');
+    }
+    camUI();
+  }
+  $('#camToggle').onclick = () => {
+    if (Cam && Cam.on) { Cam.stop(); store.set('jk.camera', false); camUI(); if (M && M.mode === 'online') Net.send({ t: 'face', ex: 'neutral', tilt: 0 }); return; }
+    camStart(false);
+  };
+  let faceSent = { ex: null, tilt: 0, t: 0 };
+  function camTick() {
+    if (!Cam || !Cam.on || !M) return;
+    if (Cam.raw === 'ILoveYou' && performance.now() - Cam.rawSince > 600) Progress.secret('heart');
+    if (M.mode === 'online' && Cam.face) {
+      const tb = Math.round((Cam.face.tilt || 0) / 3) * 3, nowr = performance.now();
+      if ((Cam.face.ex !== faceSent.ex || tb !== faceSent.tilt) && nowr - faceSent.t > 120) { Net.send({ t: 'face', ex: Cam.face.ex, tilt: tb }); faceSent = { ex: Cam.face.ex, tilt: tb, t: nowr }; }
+    }
+    Cam.draw($('#camView'), '#3ef0ff');
+    let p = 0, label = 'GET READY', locked = false, aim = null;
+    if (M.picked) { p = 1; label = 'LOCKED: ' + M.picked.toUpperCase(); locked = true; }
+    else if (M.timerOn) {
+      const g = Cam.gesture, held = Cam.held();
+      if (g) { p = clamp(held / 1000); label = 'HOLD ' + g.toUpperCase() + '...'; aim = g; if (held >= 1000) pick(g); }
+      else label = Cam.landmarks ? 'MAKE A FIST, PALM OR V' : 'SHOW YOUR HAND';
+    }
+    $('#camRing').style.setProperty('--p', p);
+    $('#camLbl').textContent = label;
+    $('#camPanel').classList.toggle('locked', locked);
+    $$('.card').forEach((c) => c.classList.toggle('aim', !M.picked && c.dataset.c === aim));
+  }
 
   /* ---------------------------------------------------------------- victory */
   let V = null;
@@ -644,6 +842,7 @@
     $('#vicNote').textContent = '';
     $('#bRematch').disabled = r.staked && Wallet.get() < ENTRY;
     if (r.won) SFX.coin();
+    if (Cam && Cam.on) Cam.stop();
     show('victory');
   }
   loops.victory = (t) => {
